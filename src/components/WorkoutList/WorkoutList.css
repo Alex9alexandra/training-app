@@ -1,0 +1,66 @@
+.workout-list{
+    font-family: 'Inter', sans-serif;
+    font-weight: bold;
+    font-style: italic;
+    font-size: 32px;
+    cursor: pointer;
+    transition: 0.2s;
+    border-collapse: collapse;
+    color: white;
+    margin: 0 auto;
+}
+
+ul{
+    display:flex;
+    flex-direction: column;
+    gap:20px;
+    list-style-type: none;
+    width:auto;
+    justify-content:left;
+    padding-left: 20px;
+    padding-right:20px;
+    padding-top:none;
+}
+
+li{
+    font-size: 16px;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+li:hover{
+    background-color: #26f5f5;
+}
+
+.selected{
+    background-color: #20E2E2;
+}
+
+.list-pagination{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+}
+
+.list-pagination button {
+  padding: 8px 8px;
+  background: rgba(167, 235, 245, 0.2); /* match glass style */
+  border: none;
+  border-radius: 8px;
+  color: white;
+  cursor: pointer;
+  backdrop-filter: blur(5px);
+  transition: 0.2s all;
+}
+
+.list-pagination button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.list-pagination button:hover:not(:disabled) {
+  background: rgba(167, 235, 245, 0.4);
+}

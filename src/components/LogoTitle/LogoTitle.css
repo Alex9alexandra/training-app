@@ -1,0 +1,16 @@
+.logo-title{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    position: absolute;
+    top: 10px;
+    left: 10px;
+}
+
+.logo-title-text{
+    font-size: 40px;
+    font-family:'Inter', sans-serif;
+    font-weight: bold;
+    font-style: italic;
+    color: white;
+}

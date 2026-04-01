@@ -1,0 +1,44 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+}
+
+#root, .app-background {
+    width: 100%;
+    min-height: 100vh;
+}
+
+.app-background{
+    background-image:url('../assets/Background.jpeg') ;
+    background-repeat: repeat;
+    background-size: auto;
+    background-position: top left;
+
+    width: 100%;
+    min-height: 100vh;
+    box-sizing: border-box;
+
+    display:flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.logo-title-comp{
+    align-self:top left;
+}
+
+.center-wrapper{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height:100%;
+}
+
+.summary{
+    width:450px;
+    justify-content: center;
+    align-items: center;
+}
+

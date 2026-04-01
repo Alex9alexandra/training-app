@@ -1,0 +1,44 @@
+.add-exercise-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 30px;
+}
+
+.form-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 300px;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  font-family: 'Inter', sans-serif;
+  color: white;
+}
+
+.input-group input {
+  background-color: #20E2E2;
+  border: none;
+  border-radius: 6px;
+  padding: 8px;
+  color: black;
+}
+
+Button {
+  margin-top: 10px;
+  padding: 10px;
+  background: rgba(167, 235, 245, 0.2);
+  border: none;
+  border-radius: 8px;
+  color: white;
+  cursor: pointer;
+  backdrop-filter: blur(5px);
+  transition: 0.2s;
+}
+
+.save-button:hover {
+  background: rgba(167, 235, 245, 0.4);
+}

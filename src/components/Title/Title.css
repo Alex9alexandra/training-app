@@ -1,0 +1,10 @@
+.title{
+    display:block;
+    text-align: center;
+    width:100%;
+    font-size: 40px;
+    font-family:'Inter', sans-serif;
+    font-weight: bold;
+    font-style: italic;
+    color: white;
+}

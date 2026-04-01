@@ -1,0 +1,14 @@
+.activity-summary{
+    display:flex;
+    flex-direction:row;
+    gap:20px;
+    font-family: 'Inter', sans-serif;
+    font-weight: bold;
+    font-style: italic;
+    color: black;
+    font-size: 12px;
+    align-items: center;
+    justify-items: center;
+    background-color: #20E2E2;
+    border-radius: 15px;
+}

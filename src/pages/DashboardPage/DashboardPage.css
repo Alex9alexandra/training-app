@@ -1,0 +1,36 @@
+.content{
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap:20px;
+    width: 100%;
+    max-width:100%;
+    flex: 1;
+
+    justify-content: space-between;
+    height:100%;
+}
+
+.title{
+    display: block;          
+    text-align: center;
+    font-size: 40px;
+    font-family: 'Inter', sans-serif;
+    font-weight: bold;
+    font-style: italic;
+    color: white;
+    width: 100%;  
+    text-align: center;
+    white-space: nowrap;  /* prevent wrapping */
+}
+
+.table{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 20px;
+    width:100%;
+}
+
+
+

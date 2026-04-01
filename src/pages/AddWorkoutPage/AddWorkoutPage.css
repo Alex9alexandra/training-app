@@ -1,0 +1,55 @@
+.workout-input {
+  background-color: #20E2E2;
+  border: none;
+  padding: 8px;
+  color: black;
+  border-radius: 8px;
+}
+
+.add-workout-page{
+    display:flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Inter', sans-serif;
+    font-weight: bold;
+    font-style: italic;
+    color: white;
+    font-size: 16px;
+    gap:20px;
+}
+
+.add-workout-page table{
+    width:100%;
+    border-collapse: collapse;
+    margin:0 auto;
+}
+
+.add-workout-page th {
+  text-align: center;
+}
+
+.add-workout-page td {
+  padding: 10px;
+  text-align: center;
+}
+
+.client-table tbody tr:first-child td {
+  padding-top: 60px; 
+}
+
+.workout-header{
+  display:flex;
+  gap:20px;
+  justify-content: center;
+  align-items: center;
+  margin-top: 60px;
+}
+
+.exercise-buttons{
+  display:flex;
+  gap:20px;
+  
+  justify-content: center;
+  align-items: center;
+}
