@@ -1,15 +1,20 @@
 import { render, screen, cleanup } from "@testing-library/react";
 import { describe, it, expect, beforeEach } from "vitest";
 import { AppProvider, useAppContext } from "./AppContext";
-import { ClientService } from "../service/ClientService";
-import React from "react";
+import { ClientService } from "../services/ClientService";
 
 // The ConsumerComponent must now destructure 'service' from 'useAppContext'
 const ConsumerComponent = () => {
-  const { service } = useAppContext(); 
+  const { service, tracker } = useAppContext();
+
   return (
     <div>
-      {service instanceof ClientService ? "Service Received" : "Service Missing"}
+      <span>
+        {service instanceof ClientService ? "Service Received" : "Service Missing"}
+      </span>
+      <span>
+        {tracker ? "Tracker Received" : "Tracker Missing"}
+      </span>
     </div>
   );
 };
@@ -19,21 +24,54 @@ describe("AppContext", () => {
     cleanup();
   });
 
-  it("provides the ClientService to children via AppProvider", () => {
+  it("provides service and tracker via AppProvider", () => {
     render(
       <AppProvider>
         <ConsumerComponent />
       </AppProvider>
     );
-    
-    // We check for "Service Received" to ensure the provider successfully 
-    // passed down the ClientService instance
+
     expect(screen.getByText("Service Received")).toBeInTheDocument();
+    expect(screen.getByText("Tracker Received")).toBeInTheDocument();
   });
 
-  it("returns the default service instance even without a provider", () => {
-    // This tests the 'defaultValue' passed to React.createContext
+  it("provides default service and tracker without provider", () => {
     render(<ConsumerComponent />);
+
     expect(screen.getByText("Service Received")).toBeInTheDocument();
+    expect(screen.getByText("Tracker Received")).toBeInTheDocument();
+  });
+
+  it("renders children inside AppProvider", () => {
+    render(
+      <AppProvider>
+        <div>Child Content</div>
+      </AppProvider>
+    );
+
+    expect(screen.getByText("Child Content")).toBeInTheDocument();
+  });
+
+  it("provides the same service instance across renders", () => {
+    let firstService: any;
+    let secondService: any;
+
+    const TestComponent = () => {
+      const { service } = useAppContext();
+
+      if (!firstService) firstService = service;
+      else secondService = service;
+
+      return null;
+    };
+
+    render(
+      <AppProvider>
+        <TestComponent />
+        <TestComponent />
+      </AppProvider>
+    );
+
+    expect(firstService).toBe(secondService);
   });
 });

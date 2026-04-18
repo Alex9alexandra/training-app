@@ -11,21 +11,44 @@ describe("WorkoutList", () => {
   beforeEach(cleanup);
 
   it("renders first page of workouts", () => {
-    render(<WorkoutList workouts={mockWorkouts} onSelect={() => {}} />);
+    render(
+    <WorkoutList
+      workouts={{ data: mockWorkouts, totalPages: 2 }}
+      page={1}
+      onSelect={() => {}}
+      onPageChange={() => {}}
+    />
+  );
     expect(screen.getByText("W1")).toBeInTheDocument();
-    expect(screen.queryByText("W6")).not.toBeInTheDocument();
+    expect(screen.queryByText("W6")).toBeInTheDocument();
   });
 
-  it("paginates to the next page", () => {
-    render(<WorkoutList workouts={mockWorkouts} onSelect={() => {}} />);
+  it("calls onPageChange with next page", () => {
+    const onPageChange = vi.fn();
+
+    render(
+      <WorkoutList
+        workouts={{ data: mockWorkouts, totalPages: 2 }}
+        page={1}
+        onSelect={() => {}}
+        onPageChange={onPageChange}
+      />
+    );
+
     fireEvent.click(screen.getByText(/next/i));
-    expect(screen.getByText("W6")).toBeInTheDocument();
-    expect(screen.getByText("2/2")).toBeInTheDocument();
+    expect(onPageChange).toHaveBeenCalledWith(2);
   });
 
   it("calls onSelect when a workout is clicked", () => {
     const onSelect = vi.fn();
-    render(<WorkoutList workouts={mockWorkouts} onSelect={onSelect} />);
+    render(
+      <WorkoutList
+        workouts={{ data: mockWorkouts, totalPages: 2 }}
+        page={1}
+        onSelect={onSelect}
+        onPageChange={() => {}}
+      />
+    );
     
     // 1. Find the element containing the text
     const workoutItem = screen.getByText("W1");
@@ -39,12 +62,80 @@ describe("WorkoutList", () => {
     expect(workoutItem).toHaveClass("selected");
   });
 
-  it("covers the pagination decrement branch (Line 43)", () => {
-    render(<WorkoutList workouts={mockWorkouts} onSelect={() => {}} />);
-    
-    fireEvent.click(screen.getByText(/next/i)); // Go to page 2
-    fireEvent.click(screen.getByText(/prev/i)); // Go back to page 1 (Line 43)
-    
-    expect(screen.getByText("1/2")).toBeInTheDocument();
-    });
+  it("calls onPageChange with previous page when clicking Prev", () => {
+    const onPageChange = vi.fn();
+
+    render(
+      <WorkoutList
+        workouts={{ data: mockWorkouts, totalPages: 2 }}
+        page={2} 
+        onSelect={() => {}}
+        onPageChange={onPageChange}
+      />
+    );
+
+    fireEvent.click(screen.getByText(/prev/i));
+
+    expect(onPageChange).toHaveBeenCalledWith(1);
+  });
+
+  it("disables Next button on last page", () => {
+    render(
+      <WorkoutList
+        workouts={{ data: mockWorkouts, totalPages: 2 }}
+        page={2}
+        onSelect={() => {}}
+        onPageChange={() => {}}
+      />
+    );
+
+    expect(screen.getByText(/next/i)).toBeDisabled();
+  });
+
+  it("disables Prev button on first page", () => {
+    render(
+      <WorkoutList
+        workouts={{ data: mockWorkouts, totalPages: 2 }}
+        page={1}
+        onSelect={() => {}}
+        onPageChange={() => {}}
+      />
+    );
+
+    expect(screen.getByText(/prev/i)).toBeDisabled();
+  });
+
+  it("updates selected item when another workout is clicked", () => {
+    render(
+      <WorkoutList
+        workouts={{ data: mockWorkouts, totalPages: 2 }}
+        page={1}
+        onSelect={() => {}}
+        onPageChange={() => {}}
+      />
+    );
+
+    const first = screen.getByText("W1");
+    const second = screen.getByText("W2");
+
+    fireEvent.click(first);
+    expect(first).toHaveClass("selected");
+
+    fireEvent.click(second);
+    expect(second).toHaveClass("selected");
+    expect(first).not.toHaveClass("selected");
+  });
+
+  it("renders no list items when workouts are empty", () => {
+    render(
+      <WorkoutList
+        workouts={{ data: [], totalPages: 1 }}
+        page={1}
+        onSelect={() => {}}
+        onPageChange={() => {}}
+      />
+    );
+
+    expect(screen.queryByRole("listitem")).toBeNull();
+  });
 });

@@ -23,9 +23,16 @@ describe("WorkoutButtons", () => {
   });
 
   it("alerts if updating without selection", () => {
-    render(<MemoryRouter><WorkoutButtons selectedId={null} clientId={1} onDelete={() => {}} /></MemoryRouter>);
+    render(
+      <MemoryRouter>
+        <WorkoutButtons selectedId={null} clientId={1} onDelete={() => {}} />
+      </MemoryRouter>
+    );
+
     fireEvent.click(screen.getByRole("button", { name: /update/i }));
+
     expect(window.alert).toHaveBeenCalledWith("Select a workout first!");
+    expect(mockNavigate).not.toHaveBeenCalled(); // 🔥 important
   });
 
   it("navigates to update if selectedId exists", () => {
@@ -33,4 +40,30 @@ describe("WorkoutButtons", () => {
     fireEvent.click(screen.getByRole("button", { name: /update/i }));
     expect(mockNavigate).toHaveBeenCalledWith("/workout/update/1/100");
   });
+
+  it("calls onDelete when delete button is clicked", () => {
+    const onDeleteMock = vi.fn();
+
+    render(
+      <MemoryRouter>
+        <WorkoutButtons selectedId={1} clientId={1} onDelete={onDeleteMock} />
+      </MemoryRouter>
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: /delete/i }));
+    expect(onDeleteMock).toHaveBeenCalled();
+  });
+
+  it("renders all buttons", () => {
+    render(
+      <MemoryRouter>
+        <WorkoutButtons selectedId={1} clientId={1} onDelete={() => {}} />
+      </MemoryRouter>
+    );
+
+    expect(screen.getByRole("button", { name: /add/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /delete/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /update/i })).toBeInTheDocument();
+  });
+
 });

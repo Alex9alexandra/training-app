@@ -9,19 +9,21 @@ type Client = {
 };
 
 type Props = {
-  clients: Client[];
+  clients: {
+    data: Client[];
+    totalPages: number;
+  };
+  
+  page: number;
   onView: (id: number) => void;
+  onPageChange: (page: number) => void;
 };
 
-const ClientTable: React.FC<Props> = ({ clients, onView }) => {
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5; // number of rows per page
+const ClientTable: React.FC<Props> = ({ clients, page, onView, onPageChange }) => {
+  const currentPage = page;
 
-  // calculate current page items
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const currentClients = clients.slice(startIndex, startIndex + itemsPerPage);
-
-  const totalPages = Math.ceil(clients.length / itemsPerPage);
+  const totalPages =clients.totalPages;
+  const currentClients = clients.data;
 
   return (
     <div className="table-wrapper">
@@ -51,7 +53,10 @@ const ClientTable: React.FC<Props> = ({ clients, onView }) => {
       <div className="pagination">
         <button
           disabled={currentPage === 1}
-          onClick={() => setCurrentPage(currentPage - 1)}
+          onClick={() => {
+            const newPage = currentPage - 1;
+            onPageChange(newPage);
+          }}
         >
           Prev
         </button>
@@ -62,7 +67,10 @@ const ClientTable: React.FC<Props> = ({ clients, onView }) => {
 
         <button
           disabled={currentPage === totalPages}
-          onClick={() => setCurrentPage(currentPage + 1)}
+          onClick={() => {
+            const newPage = currentPage + 1;
+            onPageChange(newPage);
+          }}
         >
           Next
         </button>

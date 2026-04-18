@@ -5,12 +5,17 @@ export default class CookieManager {
   }
 
   static getCookie(name: string): string | undefined {
-    const cookies = document.cookie.split("; ").reduce<Record<string, string>>((acc, curr) => {
-      const [k, v] = curr.split("=");
-      acc[k.trim()] = decodeURIComponent(v);
-      return acc;
-    }, {});
-    return cookies[name];
+    const raw=document.cookie;
+    
+    const pairs=raw.split(";");
+    for(let pair of pairs){
+      const[k,v]=pair.split("=");
+
+      if(k && k.trim()===name){
+        return v? decodeURIComponent(v.trim()):"";
+      }
+    }
+    return undefined;
   }
 
   static deleteCookie(name: string): void {

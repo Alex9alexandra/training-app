@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { replace, useNavigate, useParams } from "react-router-dom";
 import Title from "../../components/Title/Title";
 import Button from "../../components/Button/Button";
 import "./AddExercisePage.css";
@@ -19,7 +19,7 @@ const AddExercisePage: React.FC = () => {
     tracker.trackPage("AddExercisePage");
   }, []);
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!name || !sets || !reps || !weight) {
       alert("All fields are required!");
       return;
@@ -33,10 +33,9 @@ const AddExercisePage: React.FC = () => {
       weight: Number(weight)
     };
 
-    service.addExercise(Number(clientId), Number(workoutId), newExercise);
+    await service.addExercise(Number(clientId), Number(workoutId), newExercise);
     tracker.trackAction("add", `Exercise: ${name}`);
-    // ✅ Navigate back to the exact workout route to refresh
-    navigate(`/workout/${clientId}/${workoutId}`, { state: { refresh: true } });
+    navigate(`/workout/update/${clientId}/${workoutId}`, {replace:true, state: { refresh: true } });
   };
 
   return (

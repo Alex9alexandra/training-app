@@ -1,55 +1,64 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import "../AddWorkoutPage/AddWorkoutPage.css"; 
 import { useAppContext } from "../../context/AppContext";
 import Title from "../../components/Title/Title";
 import Button from "../../components/Button/Button";
-
+import type { Exercise } from "../../domain/Exercise";  
+import type { Client } from "../../domain/Client";
+import type { Workout } from "../../domain/Workout";
 const UpdateWorkoutPage: React.FC = () => {
   const { clientId, workoutId } = useParams();
 
   const clientIdNumber = Number(clientId);
   const workoutIdNumber = Number(workoutId);
 
+  const [client, setClient] = useState<Client | null>(null);
+  const [exercises, setExercises] = useState<Exercise[]>([]);
+
   const {service,tracker}=useAppContext();
   const navigate = useNavigate();
   const location = useLocation();
 
-  const client = service.getClient(clientIdNumber);
-  if (!client) return <div>Client not found</div>;
-
-  const [version, setVersion] = useState(0);
   const [selectedExerciseId, setSelectedExerciseId] = useState<number | null>(null);
 
-  const workouts = service.getWorkouts(clientIdNumber) ?? [];
-  const currentWorkout = workouts.find(w => w.id === workoutIdNumber);
-  const exercises = currentWorkout?.exercises ?? [];
+  useEffect(() => {
+    const loadData = async () => {
+      const clientData = await service.getClient(clientIdNumber);
+      setClient(clientData);
+
+      const workouts = await service.getWorkouts(clientIdNumber, 1, 50);
+      const current = workouts.data.find(w => w.id === workoutIdNumber);
+      setExercises(current ? current.exercises : []);
+    };
+
+    loadData();
+  }, [clientIdNumber, workoutIdNumber, location.key]);
 
   const handleAddExercise = () => {
     navigate(`/workout/${clientIdNumber}/${workoutIdNumber}/add-exercise`);
   };
 
-  const handleDeleteExercise = () => {
+  const handleDeleteExercise = async () => {
     if (selectedExerciseId === null) {
       alert("Select an exercise first!");
       return;
     }
 
     const exercise=exercises.find(ex=>ex.id===selectedExerciseId);
-    service.deleteExercise(clientIdNumber, workoutIdNumber, selectedExerciseId);
+    await service.deleteExercise(clientIdNumber, workoutIdNumber, selectedExerciseId);
     tracker.trackAction("delete",`Exercise: ${exercise?.name ?? selectedExerciseId}`)
+    setExercises(prev=>prev.filter(ex=>ex.id!==selectedExerciseId));
     setSelectedExerciseId(null);
-    setVersion(v => v + 1); 
   };
 
-  React.useEffect(() => {
-    setVersion(v => v + 1);
-  }, [location.key]);
+  
 
   React.useEffect(() => {
     tracker.trackPage("UpdateWorkoutPage");
   }, []);
 
+  if(client === null) return <div>Loading...</div>;
   return (
     <div className="add-workout-page">
 

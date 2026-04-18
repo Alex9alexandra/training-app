@@ -5,9 +5,7 @@ import { useAppContext } from "../../context/AppContext";
 import Title from "../../components/Title/Title";
 import Button from "../../components/Button/Button";
 import type { Exercise } from "../../domain/Exercise";
-import type { Workout } from "../../domain/Workout";
-
-
+import type { Client } from "../../domain/Client";
 const AddWorkoutPage: React.FC = () => {
 
   
@@ -15,41 +13,45 @@ const AddWorkoutPage: React.FC = () => {
   const {service,tracker}=useAppContext();
   const { clientId, workoutId: routeWorkoutId } = useParams();
   const clientIdNumber = Number(clientId);
-  const client = service.getClient(clientIdNumber);
+  const [client, setClient] = useState<Client | null>(null);
+  const [exercises, setExercises] = useState<Exercise[]>([]);
   const location = useLocation();
   const navigate = useNavigate();
-
-  if (!client) return <div>Client not found</div>;
 
   const [workoutId, setWorkoutId] = useState<number | null>(
     routeWorkoutId ? Number(routeWorkoutId) : null
   );
   const [name, setName] = useState("");
-  const [exercises, setExercises] = useState<Exercise[]>([]);
   const [selectedExerciseId, setSelectedExerciseId] = useState<number | null>(null);
   const [version, setVersion] = useState(0); // for delete refresh
 
+  useEffect(() => {
+    const loadClient=async () =>{
+      const data=await service.getClient(clientIdNumber);
+      setClient(data); 
+    };
+    loadClient();
+  },[clientIdNumber]);
 
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!name.trim()) {
       alert("Workout name required!");
       return;
     }
 
-    const newWorkout: Workout = {
+    const newWorkout = {
       id: Date.now(),
       name,
       exercises: []
     };
 
-    // ✅ Check the result of the add operation
-    const success = service.addWorkout(clientIdNumber, newWorkout);
+    const result = await service.addWorkout(clientIdNumber, newWorkout);
     tracker.trackAction("add", `Workout: ${name}`);
-    if (success) {
-      setWorkoutId(newWorkout.id);
+    if (result) {
+      setWorkoutId(result.id);
     } else {
-      alert("Failed to save workout!"); // 👈 This is the line your test is looking for!
+      alert("Failed to save workout!");
     }
   };
 
@@ -62,31 +64,37 @@ const AddWorkoutPage: React.FC = () => {
     navigate(`/workout/${clientIdNumber}/${workoutId}/add-exercise`);
   };
 
-  const handleDeleteExercise = () => {
+  const handleDeleteExercise = async () => {
     if (selectedExerciseId === null) {
       alert("Select an exercise first!");
       return;
     }
 
-    service.deleteExercise(clientIdNumber, workoutId!, selectedExerciseId);
+    await service.deleteExercise(clientIdNumber, workoutId!, selectedExerciseId);
     setSelectedExerciseId(null);
     setVersion(v => v + 1); // trigger refresh
   };
 
-  // ✅ Refresh exercises whenever workoutId changes, version changes, or location.state triggers
   useEffect(() => {
-    if (!workoutId) {
-      setExercises([]);
-      return;
-    }
+    const loadExercises = async () => {
+      if (!workoutId) {
+        setExercises([]);
+        return;
+      }
 
-    const latestWorkout = service.getWorkouts(clientIdNumber)?.find(w => w.id === workoutId);
-    setExercises(latestWorkout ? [...latestWorkout.exercises] : []);
-  }, [service, clientIdNumber, workoutId, location.key, location.state, version]);
+      const workouts = await service.getWorkouts(clientIdNumber, 1, 50);
+      const current = workouts?.data?.find(w => w.id === workoutId);
+      setExercises(current ? [...current.exercises] : []);
+    };
+    loadExercises();
+  }, [clientIdNumber, workoutId, location.key,version]);
 
   React.useEffect(() => {
     tracker.trackPage("AddWorkoutPage");
   }, []);
+
+  
+  if (client===null) return <div>Loading...</div>;
 
   return (
     <div className="add-workout-page">
@@ -100,7 +108,7 @@ const AddWorkoutPage: React.FC = () => {
           onChange={e => setName(e.target.value)}
           className="workout-input"
         />
-        <button id="saveButton" data-testid="saveWorkoutButton" onClick={handleSave} disabled={!name}>Save</button>
+        <button id="saveButton" data-testid="saveWorkoutButton" onClick={handleSave}>Save</button>
       </div>
 
       <Title title="Exercises" />

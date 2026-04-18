@@ -1,9 +1,9 @@
 import React, { createContext, useContext } from "react";
-import { ClientService } from "../service/ClientService";
-import { ClientMemoryRepo } from "../repository/ClientMemoryRepo";
+import { ClientService } from "../services/ClientService";
 import ActivityTracker from "../cookies/ActivityTracker"; 
-const repo = new ClientMemoryRepo();
-const service = new ClientService(repo);
+
+const service = new ClientService();
+
 const tracker = new ActivityTracker();
 interface AppContextType {
   service: ClientService;

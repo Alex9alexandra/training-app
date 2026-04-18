@@ -15,28 +15,38 @@ type WorkoutCompProps = {
 const WorkoutComp: React.FC<WorkoutCompProps> = ({ clientId }) => {
   const {service,tracker}=useAppContext();
 
-  const [workouts, setWorkouts] = useState<Workout[]>(service.getWorkouts(clientId) ?? []);
+  const [workouts, setWorkouts] = useState({
+    data: [] as Workout[],
+    totalPages: 1,
+    page: 1
+  });
 
   const [selectedId, setSelectedId] = useState<number | null>(null);
 
-  const handleDelete = () => {
-        if (selectedId === null) return alert("Select a workout first!");
-          service.deleteWorkout(clientId, selectedId);
-          setWorkouts(service.getWorkouts(clientId) ?? []); 
-          setSelectedId(null); 
+  const load = async (pageNumber:number) => {
+    const data = await service.getWorkouts(clientId, pageNumber,5);
+    setWorkouts(data);
   };
-  const location = useLocation();
+
+  const handleDelete = async () => {
+    if (selectedId === null) return alert("Select a workout first!");
+      await service.deleteWorkout(clientId, selectedId);
+      await load(workouts.page);
+      setSelectedId(null); 
+  };
 
   React.useEffect(() => {
-    setWorkouts(service.getWorkouts(clientId) ?? []);
-  }, [location]);
+    load(workouts.page);
+  }, [clientId,workouts.page,service]);
+  
+  
   return (
     <div className="workout-container">
       <div className="title">
         <Title title="Workouts" />
       </div>
       <div className="workout-content">
-        <div><WorkoutList workouts={workouts} onSelect={setSelectedId} /></div>
+        <div><WorkoutList workouts={workouts} onSelect={setSelectedId} onPageChange={(newPage) => load(newPage)} page={workouts.page} /></div>
         <div><WorkoutButtons selectedId={selectedId} clientId={clientId} onDelete={handleDelete} /></div>
       </div>
     </div>

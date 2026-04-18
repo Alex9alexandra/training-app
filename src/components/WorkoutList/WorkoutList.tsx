@@ -8,27 +8,33 @@ type Workout={
 }
 
 type WorkoutListParam={
-    workouts:Workout[];
+    workouts:{
+        data: Workout[];
+        totalPages:number;
+    };
+    page:number;
     onSelect:(id:number)=>void;
+    onPageChange:(page:number)=>void;
 };
 
-const WorkoutList: React.FC<WorkoutListParam>=({workouts,onSelect})=>{
-    const[currentPage,setCurrentPage]=useState(1);
+const WorkoutList: React.FC<WorkoutListParam>=({workouts,page,onSelect,onPageChange})=>{
+    const currentPage=page;
     const[selectedId,setSelectedId]=useState<number |null>(null);
-    const itemsPerPage=5;
-    const startIndex=(currentPage-1)*itemsPerPage;
-    const totalPages=Math.ceil(workouts.length/itemsPerPage);
-    const currentItems=workouts.slice(startIndex,startIndex+itemsPerPage)
-
+    
+    const totalPages=workouts.totalPages;
+    const currentItems=workouts.data;
+    
     const handleClick=(id:number)=>{
         setSelectedId(id);
         onSelect(id);
     }
+
     return(
         <div className="workout-list">
             <ul>
                 {currentItems.map((workout)=>(
-                    <li key={workout.id}
+                    <li 
+                    key={workout.id}
                     className={selectedId===workout.id?"selected":""}
                     onClick={()=>handleClick(workout.id)}
                     >
@@ -40,7 +46,9 @@ const WorkoutList: React.FC<WorkoutListParam>=({workouts,onSelect})=>{
             <div className="list-pagination">
                 <button
                 disabled={currentPage === 1}
-                onClick={() => setCurrentPage(currentPage - 1)}
+                onClick={() =>
+                onPageChange(currentPage - 1)
+                }
                 >
                 Prev
                 </button>
@@ -51,7 +59,9 @@ const WorkoutList: React.FC<WorkoutListParam>=({workouts,onSelect})=>{
 
                 <button
                 disabled={currentPage === totalPages}
-                onClick={() => setCurrentPage(currentPage + 1)}
+                onClick={() =>
+                onPageChange(currentPage + 1)
+                }
                 >
                 Next
                 </button>

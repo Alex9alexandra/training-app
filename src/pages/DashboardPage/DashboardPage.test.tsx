@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, cleanup } from "@testing-library/react";
+import { render, screen, fireEvent, cleanup, waitFor } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import DashboardPage from "./DashboardPage";
 import { MemoryRouter } from "react-router-dom";
@@ -18,24 +18,29 @@ const mockService = {
 };
 
 const mockTracker = {
-
   getData: vi.fn().mockReturnValue({}),
   trackPage: vi.fn(),
   trackAction: vi.fn(),
 };
 
-
-
-vi.mock("../../context/AppContext", () => ({ useAppContext: () => ({service:mockService, tracker:mockTracker}) }));
+vi.mock("../../context/AppContext", () => ({
+  useAppContext: () => ({
+    service: mockService,
+    tracker: mockTracker,
+  }),
+}));
 
 vi.mock("../../components/Table/ClientTable", () => ({
-  default: ({ clients, onView }: { clients: any[], onView: (id: number) => void }) => (
+  default: ({ clients, onView, onPageChange }: any) => (
     <div data-testid="mock-client-table">
-      {clients.map(client => (
+      {clients.data.map((client: any) => (
         <button key={client.id} onClick={() => onView(client.id)}>
           View {client.name}
         </button>
       ))}
+
+      {/* simulate pagination */}
+      <button onClick={() => onPageChange(2)}>Next Page</button>
     </div>
   ),
 }));
@@ -49,7 +54,12 @@ describe("DashboardPage", () => {
   beforeEach(() => {
     cleanup();
     vi.clearAllMocks();
-    mockService.getAllClients.mockReturnValue(mockClients);
+
+    mockService.getAllClients.mockResolvedValue({
+      data: mockClients,
+      totalPages: 2,
+      page: 1,
+    });
   });
 
   const renderPage = () => {
@@ -60,28 +70,63 @@ describe("DashboardPage", () => {
     );
   };
 
+  // 🔹 BASIC RENDER
+
   it("renders the correct title", () => {
     renderPage();
     expect(screen.getByText("CLIENT'S TABLE")).toBeInTheDocument();
   });
 
-  it("calls the service to fetch all clients on render", () => {
+  // 🔹 API CALL
+
+  it("calls service on mount", async () => {
     renderPage();
-    expect(mockService.getAllClients).toHaveBeenCalledTimes(1);
+
+    await waitFor(() => {
+      expect(mockService.getAllClients).toHaveBeenCalledTimes(1);
+    });
   });
 
-  it("renders the ClientTable with the fetched clients", () => {
+  // 🔹 DATA RENDER
+
+  it("renders clients after fetch", async () => {
     renderPage();
-    expect(screen.getByText("View Alice")).toBeInTheDocument();
+
+    expect(await screen.findByText("View Alice")).toBeInTheDocument();
     expect(screen.getByText("View Bob")).toBeInTheDocument();
   });
 
-  it("navigates to the client details page when a client is viewed", () => {
+  // 🔹 NAVIGATION
+
+  it("navigates to client details", async () => {
     renderPage();
-    
-    const viewButton = screen.getByText("View Alice");
-    fireEvent.click(viewButton);
+
+    const btn = await screen.findByText("View Alice");
+    fireEvent.click(btn);
 
     expect(mockNavigate).toHaveBeenCalledWith("/client/1");
+  });
+
+  // 🔹 TRACKER EFFECT (IMPORTANT COVERAGE)
+
+  it("tracks page view on mount", async () => {
+    renderPage();
+
+    await waitFor(() => {
+      expect(mockTracker.trackPage).toHaveBeenCalledWith("DashboardPage");
+    });
+  });
+
+  // 🔹 PAGINATION BRANCH
+
+  it("loads next page when pagination triggers onPageChange", async () => {
+    renderPage();
+
+    const nextBtn = await screen.findByText("Next Page");
+    fireEvent.click(nextBtn);
+
+    await waitFor(() => {
+      expect(mockService.getAllClients).toHaveBeenCalledWith(2, 5);
+    });
   });
 });
