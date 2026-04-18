@@ -85,4 +85,20 @@ export class ClientService {
       }
     );
   }
+
+  async getStatistics(): Promise<{
+    totalClients: number;
+    mostActiveClient: {
+      name: string;
+      workouts: number;
+    };
+    averageWorkouts: number;
+    clientsActivity: {
+      name: string;
+      workouts: number;
+    }[];
+  }> {
+    const res = await fetch(`${API_URL}/statistics`);
+    return res.json();
+  }
 }

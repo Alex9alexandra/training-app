@@ -54,55 +54,144 @@ export class ClientMemoryRepo implements IClientRepo{
     initializeRepository(): void {
         this.clients = [];
 
-        const makeExercises = (workoutId: number) => [
-            { id: workoutId * 10 + 1, name: "Exercise A", sets: 3, reps: 10, weight: 20 },
-            { id: workoutId * 10 + 2, name: "Exercise B", sets: 4, reps: 12, weight: 25 }
+        const workoutTypes:string[] = [
+            "HIIT",
+            "Strength - Upper Body",
+            "Strength - Lower Body",
+            "Push Day",
+            "Pull Day",
+            "Leg Day",
+            "Cardio Endurance",
+            "Mobility & Recovery"
         ];
 
-        const makeWorkouts = (clientId: number): any[] => {
+        const exercisePool: string[] = [
+            "Squats", "Bench Press", "Deadlift", "Pull-ups",
+            "Burpees", "Kettlebell Swings", "Lunges", "Plank",
+            "Rowing", "Jump Rope", "Shoulder Press"
+        ];
+
+        const getRandomExercises = (workoutId: number) => {
+            const exercises = [];
+            const count = 3 + (workoutId % 3);
+
+            for (let i = 0; i < count; i++) {
+                exercises.push({
+                    id: workoutId * 10 + i,
+                    name: exercisePool[(workoutId + i) % exercisePool.length]!,
+                    sets: 3 + (i % 2),
+                    reps: 8 + (i * 2),
+                    weight: 20 + (i * 5)
+                });
+            }
+
+            return exercises;
+        };
+
+        const makeWorkouts = (clientId: number, count: number) => {
             const workouts = [];
 
-            for (let i = 1; i <= 6; i++) {
+            for (let i = 1; i <= count; i++) {
                 workouts.push({
                     id: clientId * 100 + i,
-                    name: `Workout ${i}`,
-                    exercises: makeExercises(clientId * 100 + i)
+                    name: workoutTypes[(i + clientId) % workoutTypes.length]!,
+                    exercises: getRandomExercises(clientId * 100 + i)
                 });
             }
 
             return workouts;
         };
 
-        const makeMeasurements = () => [
+        const getMondayDate = (weeksAgo: number) => {
+            const date = new Date();
+            date.setDate(date.getDate() - weeksAgo * 14);
+
+            // force "Monday-like spacing" (approx realistic weekly logging)
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const year = date.getFullYear();
+
+            return `${day}/${month}/${year}`;
+        };
+
+        const makeMeasurements = (baseWeight: number, trend: number) => {
+            return [
+                {
+                    height: 175,
+                    weight: baseWeight,
+                    muscularMassPercent: 32,
+                    fatMassPercent: 18,
+                    boneMassPercent: 12,
+                    leanBodyMassPercent: 38,
+                    date: getMondayDate(4)
+                },
+                {
+                    height: 175,
+                    weight: baseWeight + trend,
+                    muscularMassPercent: 33,
+                    fatMassPercent: 17,
+                    boneMassPercent: 12,
+                    leanBodyMassPercent: 38,
+                    date: getMondayDate(2)
+                },
+                {
+                    height: 175,
+                    weight: baseWeight + trend * 2,
+                    muscularMassPercent: 34,
+                    fatMassPercent: 16,
+                    boneMassPercent: 12,
+                    leanBodyMassPercent: 38,
+                    date: getMondayDate(0)
+                }
+            ];
+        };
+
+        const clientsData = [
             {
-                height: 170,
-                weight: 70,
-                muscularMassPercent: 30,
-                fatMassPercent: 20,
-                boneMassPercent: 10,
-                leanBodyMassPercent: 40,
-                date: this.getPastDate(0)
+                id: 1,
+                name: "Andrei Popescu",
+                age: 26,
+                workouts: makeWorkouts(1, 6), 
+                measurements: makeMeasurements(72, 1)
             },
             {
-                height: 170,
-                weight: 72,
-                muscularMassPercent: 31,
-                fatMassPercent: 21,
-                boneMassPercent: 10,
-                leanBodyMassPercent: 38,
-                date: this.getPastDate(1)
+                id: 2,
+                name: "Maria Ionescu",
+                age: 27,
+                workouts: makeWorkouts(2, 4),
+                measurements: makeMeasurements(60, -0.5)
+            },
+            {
+                id: 3,
+                name: "Alexandru Stan",
+                age: 25,
+                workouts: makeWorkouts(3, 3),
+                measurements: makeMeasurements(80, 0.8)
+            },
+            {
+                id: 4,
+                name: "Elena Dumitrescu",
+                age: 30,
+                workouts: makeWorkouts(4, 5),
+                measurements: makeMeasurements(65, -1)
+            },
+            {
+                id: 5,
+                name: "Radu Mihai",
+                age: 28,
+                workouts: makeWorkouts(5, 2),
+                measurements: makeMeasurements(90, 0.3)
+            },
+            {
+                id: 6,
+                name: "Ioana Georgescu",
+                age: 29,
+                workouts: makeWorkouts(6, 7), // another heavy user (good for pagination)
+                measurements: makeMeasurements(58, -0.8)
             }
         ];
 
-        for (let c = 1; c <= 6; c++) {
-            this.clients.push({
-                id: c,
-                name: `Client ${c}`,
-                age: 20 + c,
-                workouts: makeWorkouts(c),
-                measurements: makeMeasurements()
-            });
-        }
+        this.clients = clientsData;
     }
 
 }

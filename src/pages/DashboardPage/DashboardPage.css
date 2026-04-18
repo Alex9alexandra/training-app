@@ -32,5 +32,25 @@
     width:100%;
 }
 
+.statisticsBTN {
+  padding: 10px 20px;
+  border-radius: 20px;
+  border: none;
+  font-family: 'Inter', sans-serif;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.2s;
+
+  background-color: #20E2E2;
+  color: black;
+
+  width: 400px;
+  align-self: center;
+}
+
+.statisticsBTN:hover {
+  background-color: #26f5f5;
+}
+
 
 

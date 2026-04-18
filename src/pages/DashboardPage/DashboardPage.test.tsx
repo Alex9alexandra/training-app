@@ -15,6 +15,12 @@ vi.mock("react-router-dom", async () => {
 
 const mockService = {
   getAllClients: vi.fn(),
+  getStatistics: vi.fn().mockResolvedValue({
+    totalClients: 0,
+    mostActiveClient: { name: "", workouts: 0 },
+    averageWorkouts: 0,
+    clientsActivity: [],
+  }),
 };
 
 const mockTracker = {
@@ -127,6 +133,35 @@ describe("DashboardPage", () => {
 
     await waitFor(() => {
       expect(mockService.getAllClients).toHaveBeenCalledWith(2, 5);
+    });
+  });
+
+  it("opens dashboard modal when button is clicked", async () => {
+    renderPage();
+
+    const btn = await screen.findByText("View Global Statistics");
+    fireEvent.click(btn);
+
+    expect(await screen.findByText(/Global Dashboard Statistics/i)).toBeInTheDocument();
+  });
+
+  it("closes dashboard modal when close is clicked", async () => {
+    renderPage();
+
+    // open modal
+    const btn = await screen.findByText("View Global Statistics");
+    fireEvent.click(btn);
+
+    // modal appears
+    const closeBtn = await screen.findByText("✕");
+    expect(closeBtn).toBeInTheDocument();
+
+    // close modal
+    fireEvent.click(closeBtn);
+
+    // modal should disappear
+    await waitFor(() => {
+      expect(screen.queryByText(/Global Dashboard Statistics/i)).not.toBeInTheDocument();
     });
   });
 });
