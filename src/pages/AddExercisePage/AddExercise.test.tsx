@@ -50,7 +50,6 @@ describe("AddExercisePage", () => {
       </MemoryRouter>
     );
 
-  // 🔴 TRACKER COVERAGE
 
   it("tracks page on mount", async () => {
     renderPage();
@@ -62,7 +61,6 @@ describe("AddExercisePage", () => {
     });
   });
 
-  // 🔴 VALIDATION BRANCH (ALL FIELDS EMPTY)
 
   it("shows alert when fields are missing", () => {
     renderPage();
@@ -73,7 +71,6 @@ describe("AddExercisePage", () => {
     expect(mockService.addExercise).not.toHaveBeenCalled();
   });
 
-  // 🔴 PARTIAL INPUT FAILURE BRANCHES
 
   it("fails if only name is provided", () => {
     renderPage();
@@ -105,7 +102,6 @@ describe("AddExercisePage", () => {
     );
   });
 
-  // 🔴 SUCCESS PATH
 
   it("saves exercise and navigates correctly", async () => {
     mockService.addExercise.mockResolvedValue({ id: 123 });
@@ -150,8 +146,6 @@ describe("AddExercisePage", () => {
       { replace: true, state: { refresh: true } }
     );
   });
-
-  // 🔴 EDGE CASE: EMPTY STRINGS VS ZERO
 
   it("treats empty strings as invalid input", () => {
     renderPage();

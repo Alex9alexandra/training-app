@@ -33,9 +33,19 @@ const AddExercisePage: React.FC = () => {
       weight: Number(weight)
     };
 
-    await service.addExercise(Number(clientId), Number(workoutId), newExercise);
-    tracker.trackAction("add", `Exercise: ${name}`);
-    navigate(`/workout/update/${clientId}/${workoutId}`, {replace:true, state: { refresh: true } });
+    try {
+      await service.addExercise(Number(clientId), Number(workoutId), newExercise);
+
+      tracker.trackAction("add", `Exercise: ${name}`);
+
+      navigate(`/workout/update/${clientId}/${workoutId}`, {
+        replace: true,
+        state: { refresh: true }
+      });
+
+    } catch (err: any) {
+      alert(err?.response?.data?.message || "Failed to add exercise");
+    }
   };
 
   return (

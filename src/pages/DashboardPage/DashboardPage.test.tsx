@@ -45,7 +45,6 @@ vi.mock("../../components/Table/ClientTable", () => ({
         </button>
       ))}
 
-      {/* simulate pagination */}
       <button onClick={() => onPageChange(2)}>Next Page</button>
     </div>
   ),
@@ -76,14 +75,10 @@ describe("DashboardPage", () => {
     );
   };
 
-  // 🔹 BASIC RENDER
-
   it("renders the correct title", () => {
     renderPage();
     expect(screen.getByText("CLIENT'S TABLE")).toBeInTheDocument();
   });
-
-  // 🔹 API CALL
 
   it("calls service on mount", async () => {
     renderPage();
@@ -93,7 +88,6 @@ describe("DashboardPage", () => {
     });
   });
 
-  // 🔹 DATA RENDER
 
   it("renders clients after fetch", async () => {
     renderPage();
@@ -102,7 +96,6 @@ describe("DashboardPage", () => {
     expect(screen.getByText("View Bob")).toBeInTheDocument();
   });
 
-  // 🔹 NAVIGATION
 
   it("navigates to client details", async () => {
     renderPage();
@@ -113,7 +106,6 @@ describe("DashboardPage", () => {
     expect(mockNavigate).toHaveBeenCalledWith("/client/1");
   });
 
-  // 🔹 TRACKER EFFECT (IMPORTANT COVERAGE)
 
   it("tracks page view on mount", async () => {
     renderPage();
@@ -123,7 +115,6 @@ describe("DashboardPage", () => {
     });
   });
 
-  // 🔹 PAGINATION BRANCH
 
   it("loads next page when pagination triggers onPageChange", async () => {
     renderPage();
@@ -148,18 +139,14 @@ describe("DashboardPage", () => {
   it("closes dashboard modal when close is clicked", async () => {
     renderPage();
 
-    // open modal
     const btn = await screen.findByText("View Global Statistics");
     fireEvent.click(btn);
 
-    // modal appears
     const closeBtn = await screen.findByText("✕");
     expect(closeBtn).toBeInTheDocument();
 
-    // close modal
     fireEvent.click(closeBtn);
 
-    // modal should disappear
     await waitFor(() => {
       expect(screen.queryByText(/Global Dashboard Statistics/i)).not.toBeInTheDocument();
     });

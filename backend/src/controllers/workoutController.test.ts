@@ -50,7 +50,6 @@ describe("Workout Controller", () => {
     };
   });
 
-  // ---------------- GET WORKOUTS ----------------
 
   it("returns 400 if clientId invalid", () => {
     req.params = { clientId: "abc" };
@@ -119,8 +118,6 @@ describe("Workout Controller", () => {
     });
   });
 
-  // ---------------- ADD WORKOUT ----------------
-
   it("returns 400 if clientId invalid", () => {
     req.params = { clientId: "abc" };
     (validateId as any).mockReturnValue("bad id");
@@ -171,7 +168,6 @@ describe("Workout Controller", () => {
     expect(res.json).toHaveBeenCalledWith(workout);
   });
 
-  // ---------------- DELETE WORKOUT ----------------
 
   it("returns 400 if clientId invalid", () => {
     req.params = { clientId: "abc", workoutId: "1" };

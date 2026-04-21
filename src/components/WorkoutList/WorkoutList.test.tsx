@@ -50,13 +50,10 @@ describe("WorkoutList", () => {
       />
     );
     
-    // 1. Find the element containing the text
     const workoutItem = screen.getByText("W1");
     
-    // 2. Click it
     fireEvent.click(workoutItem);
     
-    // 3. Verify the callback was called
     expect(onSelect).toHaveBeenCalledWith(1);
     
     expect(workoutItem).toHaveClass("selected");

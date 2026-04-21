@@ -39,7 +39,6 @@ export class ClientMemoryRepo implements IClientRepo{
 
 
 
-    //initialization
     private getPastDate(weeksAgo: number): string {
         const date = new Date();
         date.setDate(date.getDate() - weeksAgo * 14);
@@ -106,7 +105,6 @@ export class ClientMemoryRepo implements IClientRepo{
             const date = new Date();
             date.setDate(date.getDate() - weeksAgo * 14);
 
-            // force "Monday-like spacing" (approx realistic weekly logging)
             const day = String(date.getDate()).padStart(2, '0');
             const month = String(date.getMonth() + 1).padStart(2, '0');
             const year = date.getFullYear();
@@ -186,7 +184,7 @@ export class ClientMemoryRepo implements IClientRepo{
                 id: 6,
                 name: "Ioana Georgescu",
                 age: 29,
-                workouts: makeWorkouts(6, 7), // another heavy user (good for pagination)
+                workouts: makeWorkouts(6, 7), 
                 measurements: makeMeasurements(58, -0.8)
             }
         ];

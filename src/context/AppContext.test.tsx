@@ -3,7 +3,6 @@ import { describe, it, expect, beforeEach } from "vitest";
 import { AppProvider, useAppContext } from "./AppContext";
 import { ClientService } from "../services/ClientService";
 
-// The ConsumerComponent must now destructure 'service' from 'useAppContext'
 const ConsumerComponent = () => {
   const { service, tracker } = useAppContext();
 

@@ -10,7 +10,6 @@ vi.mock("../service/clientServiceInstance", () => {
   };
 });
 
-// validators mocked so we fully control branches
 vi.mock("../validators/idValidators", () => ({
   validateId: vi.fn(),
 }));
@@ -43,7 +42,6 @@ describe("Exercise Controller", () => {
     };
   });
 
-  // ---------------- ADD EXERCISE ----------------
 
   it("returns 400 if clientId invalid", () => {
     req.params = { clientId: "abc", workoutId: "1" };
@@ -59,7 +57,7 @@ describe("Exercise Controller", () => {
     req.params = { clientId: "1", workoutId: "abc" };
 
     (validateId as any)
-      .mockReturnValueOnce(null) // client ok
+      .mockReturnValueOnce(null) 
       .mockReturnValueOnce("invalid workoutId");
 
     addExercise(req, res);
@@ -112,7 +110,6 @@ describe("Exercise Controller", () => {
     expect(res.json).toHaveBeenCalledWith(exercise);
   });
 
-  // ---------------- DELETE EXERCISE ----------------
 
   it("returns 400 if clientId invalid", () => {
     req.params = { clientId: "abc", workoutId: "1", exerciseId: "2" };

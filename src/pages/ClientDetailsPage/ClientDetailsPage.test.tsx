@@ -26,6 +26,8 @@ vi.mock("../../components/WorkoutComp/WokroutComp", () => ({
   ),
 }));
 
+// Keeping mocks defined even if commented out in UI, 
+// but we won't assert on them in the main "exists" test.
 vi.mock("../../components/ViewMeasurementsComp/ViewMeasurementsComp", () => ({
   default: ({ clientId }: { clientId: number }) => (
     <div data-testid="measurements-comp">Measurements for {clientId}</div>
@@ -54,28 +56,22 @@ describe("ClientDetailsPage", () => {
     );
   };
 
-  // 🔴 LOADING BRANCH
-
   it("shows loading state before client loads", () => {
     mockService.getClient.mockResolvedValue(null);
-
     renderPage("1");
-
     expect(screen.getByText(/loading/i)).toBeInTheDocument();
   });
 
-
   it("renders 'Client not found' when service returns null", async () => {
     mockService.getClient.mockResolvedValue(null);
-
     renderPage("999");
 
-    await waitFor(() => {
-      expect(screen.getByText(/client not found/i)).toBeInTheDocument();
-    });
+    // Using findBy to handle the async state transition gracefully
+    const message = await screen.findByText(/client not found/i);
+    expect(message).toBeInTheDocument();
   });
 
-  it("renders page and subcomponents when client exists", async () => {
+  it("renders page and active subcomponents when client exists", async () => {
     mockService.getClient.mockResolvedValue({
       id: 1,
       name: "John Doe",
@@ -83,21 +79,18 @@ describe("ClientDetailsPage", () => {
 
     renderPage("1");
 
-    await waitFor(() => {
-      expect(screen.getByText("DETAILS")).toBeInTheDocument();
-    });
+    // Check for Title
+    expect(await screen.findByText("DETAILS")).toBeInTheDocument();
 
+    // Check for Workout component (which is active)
     expect(screen.getByTestId("workout-comp")).toHaveTextContent(
       "Workout for 1"
     );
-    expect(screen.getByTestId("measurements-comp")).toHaveTextContent(
-      "Measurements for 1"
-    );
-    expect(screen.getByTestId("availability-comp")).toHaveTextContent(
-      "Availability for 1"
-    );
-  });
 
+    // Assert that the commented-out components are NOT in the document
+    expect(screen.queryByTestId("measurements-comp")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("availability-comp")).not.toBeInTheDocument();
+  });
 
   it("converts URL param to number correctly", async () => {
     mockService.getClient.mockResolvedValue({

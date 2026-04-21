@@ -9,7 +9,6 @@ describe("ClientMemoryRepo", () => {
     repo = new ClientMemoryRepo([]);
   });
 
-  // ---------------- INIT ----------------
 
   it("initializes with default data when no initial clients provided", () => {
     const freshRepo = new ClientMemoryRepo();
@@ -37,7 +36,6 @@ describe("ClientMemoryRepo", () => {
     expect(customRepo.getAll()).toEqual(initial);
   });
 
-  // ---------------- GET ----------------
 
   it("returns all clients", () => {
     const clients = repo.getAll();
@@ -54,7 +52,6 @@ describe("ClientMemoryRepo", () => {
     expect(repo.getById(999)).toBeUndefined();
   });
 
-  // ---------------- ADD ----------------
 
   it("adds and retrieves a client", () => {
     const newClient: Client = {
@@ -70,8 +67,6 @@ describe("ClientMemoryRepo", () => {
     expect(repo.getById(99)).toEqual(newClient);
     expect(repo.getAll().length).toBe(7);
   });
-
-  // ---------------- UPDATE ----------------
 
   it("updates an existing client and returns true", () => {
     const client = repo.getById(1)!;
@@ -113,7 +108,6 @@ describe("ClientMemoryRepo", () => {
     expect(repo.getById(1)).toEqual(updated);
   });
 
-  // ---------------- DELETE ----------------
 
   it("deletes a client and returns deleted client", () => {
     const deleted = repo.delete(1);
@@ -127,7 +121,6 @@ describe("ClientMemoryRepo", () => {
     expect(repo.delete(999)).toBeNull();
   });
 
-  // ---------------- INITIAL DATA VALIDATION ----------------
 
   it("initial client has workouts and measurements", () => {
     const client = repo.getById(1)!;

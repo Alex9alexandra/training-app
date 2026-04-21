@@ -8,7 +8,6 @@ import {
   deleteClient,
 } from "./clientController";
 
-// -------------------- MOCK SERVICE --------------------
 vi.mock("../service/clientServiceInstance", () => ({
   clientService: {
     getAllClients: vi.fn(),
@@ -21,7 +20,6 @@ vi.mock("../service/clientServiceInstance", () => ({
 
 import { clientService } from "../service/clientServiceInstance";
 
-// -------------------- MOCK VALIDATORS --------------------
 vi.mock("../validators/clientValidators", () => ({
   validateClient: vi.fn(),
 }));
@@ -33,7 +31,6 @@ vi.mock("../validators/idValidators", () => ({
 import { validateClient } from "../validators/clientValidators";
 import { validateId } from "../validators/idValidators";
 
-// -------------------- MOCK RESPONSE --------------------
 const mockRes = () => {
   const res: Partial<Response> = {};
   res.status = vi.fn().mockReturnValue(res);
@@ -46,9 +43,6 @@ describe("Client Controller - FULL COVERAGE", () => {
     vi.clearAllMocks();
   });
 
-  // =====================================================
-  // GET ALL CLIENTS
-  // =====================================================
 
   it("getAllClients returns paginated data", () => {
     (clientService.getAllClients as any).mockReturnValue([
@@ -98,10 +92,6 @@ describe("Client Controller - FULL COVERAGE", () => {
     expect(res.status).toHaveBeenCalledWith(400);
   });
 
-  // =====================================================
-  // GET CLIENT
-  // =====================================================
-
   it("getClient returns 400 if id invalid", () => {
     (validateId as any).mockReturnValue("invalid id");
 
@@ -137,10 +127,6 @@ describe("Client Controller - FULL COVERAGE", () => {
     expect(res.json).toHaveBeenCalledWith({ id: 1 });
   });
 
-  // =====================================================
-  // ADD CLIENT
-  // =====================================================
-
   it("addClient returns 400 if validation fails", () => {
     (validateClient as any).mockReturnValue("error");
 
@@ -164,10 +150,6 @@ describe("Client Controller - FULL COVERAGE", () => {
     expect(res.status).toHaveBeenCalledWith(201);
     expect(res.json).toHaveBeenCalledWith({ id: 1 });
   });
-
-  // =====================================================
-  // UPDATE CLIENT
-  // =====================================================
 
   it("updateClient returns 400 for invalid id", () => {
     (validateId as any).mockReturnValue("error");
@@ -217,10 +199,6 @@ describe("Client Controller - FULL COVERAGE", () => {
 
     expect(res.json).toHaveBeenCalledWith({ id: 1 });
   });
-
-  // =====================================================
-  // DELETE CLIENT
-  // =====================================================
 
   it("deleteClient returns 400 for invalid id", () => {
     (validateId as any).mockReturnValue("error");

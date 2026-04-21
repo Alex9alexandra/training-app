@@ -38,10 +38,11 @@ const ClientDetailsPage: React.FC=()=>{
             
             <WorkoutComp clientId={clientId}/>
 
+            {/*
             <ViewMeasurementsComp clientId={clientId}/>
             
             <AvailabilityComp clientId={clientId}/>
-            
+            */}
         </div>
     );
 };

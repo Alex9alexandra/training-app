@@ -17,6 +17,8 @@
     width: 400px;
     position: relative;
     color: white;
+    max-height:80vh;
+    overflow-y:auto;
 }
 
 .close-btn {

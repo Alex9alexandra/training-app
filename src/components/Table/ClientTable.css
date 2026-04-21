@@ -47,7 +47,7 @@
 
 .pagination button {
   padding: 8px 16px;
-  background: rgba(167, 235, 245, 0.2); /* match glass style */
+  background: rgba(167, 235, 245, 0.2); 
   border: none;
   border-radius: 8px;
   color: white;

@@ -9,7 +9,6 @@ import { validateId } from "../validators/idValidators";
 //200 deleted
 //201 added
 
-
 export const getAllClients=(req: Request,res: Response)=>{
     const {page="1", limit="5"}=req.query;
 

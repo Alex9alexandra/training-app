@@ -14,7 +14,6 @@ const ViewMeasurementsComp: React.FC<ViewMeasurementsCompProps> = ({ clientId })
       </div>
       <div className="view-measurements-content">
         <div><Button text="Table View"/></div>
-        <div><Button text="Chart View"/></div>
       </div>
     </div>
   );

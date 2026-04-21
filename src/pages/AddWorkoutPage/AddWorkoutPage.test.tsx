@@ -70,8 +70,6 @@ describe("AddWorkoutPage", () => {
     );
   };
 
-  // 🔴 LOADING / CLIENT FETCH
-
   it("shows loading when client is null initially", async () => {
     mockService.getClient.mockResolvedValue(null);
 
@@ -88,7 +86,6 @@ describe("AddWorkoutPage", () => {
     expect(await screen.findByText("ADD NEW WORKOUT")).toBeInTheDocument();
   });
 
-  // 🔴 TRACKER COVERAGE
 
   it("tracks page on mount", async () => {
     mockService.getClient.mockResolvedValue({ id: 1 });
@@ -100,7 +97,6 @@ describe("AddWorkoutPage", () => {
     });
   });
 
-  // 🔴 SAVE WORKOUT SUCCESS
 
   it("saves workout successfully", async () => {
     mockService.getClient.mockResolvedValue({ id: 1 });
@@ -118,7 +114,6 @@ describe("AddWorkoutPage", () => {
     });
   });
 
-  // 🔴 SAVE WORKOUT FAILURE
 
   it("shows alert when workout save fails", async () => {
     mockService.getClient.mockResolvedValue({ id: 1 });
@@ -136,7 +131,6 @@ describe("AddWorkoutPage", () => {
     });
   });
 
-  // 🔴 EMPTY NAME VALIDATION
 
   it("shows alert if workout name is empty", async () => {
     mockService.getClient.mockResolvedValue({ id: 1 });
@@ -148,7 +142,6 @@ describe("AddWorkoutPage", () => {
     expect(window.alert).toHaveBeenCalledWith("Workout name required!");
   });
 
-  // 🔴 ADD EXERCISE BLOCKED (allowed per request)
 
   it("blocks adding exercise if workout not saved", async () => {
     mockService.getClient.mockResolvedValue({ id: 1 });
@@ -160,7 +153,6 @@ describe("AddWorkoutPage", () => {
     expect(window.alert).toHaveBeenCalledWith("Save workout first!");
   });
 
-  // 🔴 DELETE EXERCISE NO SELECTION
 
   it("shows alert if deleting without selection", async () => {
     mockService.getClient.mockResolvedValue({ id: 1 });
@@ -172,7 +164,6 @@ describe("AddWorkoutPage", () => {
     expect(window.alert).toHaveBeenCalledWith("Select an exercise first!");
   });
 
-  // 🔴 DELETE EXERCISE SUCCESS PATH (mocked state only)
 
   it("calls deleteExercise when selection exists", async () => {
     vi.mocked(router.useParams).mockReturnValue({

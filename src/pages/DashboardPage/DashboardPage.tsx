@@ -32,13 +32,64 @@ const DashboardPage: React.FC = () => {
     tracker.trackPage("DashboardPage");
   }, []);
 
+  useEffect(() => {
+    const handleSync = () => {
+      loadClients(clients.page); 
+    };
+
+    window.addEventListener("sync-done", handleSync);
+    return () => window.removeEventListener("sync-done", handleSync);
+  }, [clients.page]);
   
+  useEffect(() => {
+    const handleWsUpdate = () => {
+      loadClients(clients.page);
+    };
+
+    window.addEventListener("ws-update", handleWsUpdate);
+
+    return () => {
+      window.removeEventListener("ws-update", handleWsUpdate);
+    };
+  }, [clients.page]);
+
   return (
       <div className="content">
 
         <div className="title"><Title title="CLIENT'S TABLE" /></div>
 
         <div className="table"><ClientTable clients={clients} onView={handleView} onPageChange={(newPage)=>loadClients(newPage)} page={clients.page} /></div>
+
+        <div style={{display:"flex",gap:"10px",alignSelf:"center"}}>
+          <button style={{width:"100px"}}
+            className="statisticsBTN"
+            onClick={() => {fetch("http://localhost:3000/generator/start", { method: "POST" });console.log("Generator started");}}
+          >
+            Start Generator
+          </button>
+
+          <button style={{width:"100px"}}
+            className="statisticsBTN"
+            onClick={() => fetch("http://localhost:3000/generator/stop", { method: "POST" })}
+          >
+            Stop Generator
+          </button>
+        </div>
+
+
+
+        <button className="statisticsBTN" onClick={async () => {
+          await service.addClient({
+            id: Date.now(),
+            name: "Test",
+            age: 20,
+            workouts: [],
+            measurements: []
+          });
+          loadClients(clients.page);
+        }}>
+          Add Client
+        </button>
 
         <button className="statisticsBTN" onClick={() => setShowStats(true)}>
           View Global Statistics

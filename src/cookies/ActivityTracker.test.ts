@@ -16,7 +16,6 @@ describe("ActivityTracker", () => {
     tracker = new ActivityTracker(cookieName);
   });
 
-  // 🔹 INIT
 
   test("initializes with empty data if no cookie exists", () => {
     const data = tracker.getData();
@@ -50,8 +49,6 @@ describe("ActivityTracker", () => {
     expect(data.actions).toEqual([]);
   });
 
-  // 🔹 PAGE TRACKING
-
   test("tracks page visits and increments counts", () => {
     vi.useFakeTimers();
 
@@ -75,7 +72,7 @@ describe("ActivityTracker", () => {
     const page = "dashboard";
 
     tracker.trackPage(page);
-    tracker.trackPage(page); // should be ignored
+    tracker.trackPage(page); 
 
     expect(tracker.getData().pageVisits[page]).toBe(1);
   });
@@ -84,7 +81,7 @@ describe("ActivityTracker", () => {
     vi.useFakeTimers();
 
     tracker.trackPage("home");
-    vi.advanceTimersByTime(600); // beyond debounce
+    vi.advanceTimersByTime(600); 
     tracker.trackPage("home");
 
     expect(tracker.getData().pageVisits["home"]).toBe(2);
@@ -101,8 +98,6 @@ describe("ActivityTracker", () => {
     expect(data.pageVisits["home"]).toBe(1);
     expect(data.pageVisits["about"]).toBe(1);
   });
-
-  // 🔹 ACTION TRACKING
 
   test("tracks actions correctly", () => {
     tracker.trackAction("add", "item-123");
@@ -129,7 +124,6 @@ describe("ActivityTracker", () => {
     expect(data.lastAction?.item).toBe("item-2");
   });
 
-  // 🔹 SAVE FUNCTION (indirect coverage)
 
   test("calls save (setCookie) when tracking page", () => {
     tracker.trackPage("home");

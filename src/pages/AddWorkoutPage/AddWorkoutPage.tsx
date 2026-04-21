@@ -23,7 +23,7 @@ const AddWorkoutPage: React.FC = () => {
   );
   const [name, setName] = useState("");
   const [selectedExerciseId, setSelectedExerciseId] = useState<number | null>(null);
-  const [version, setVersion] = useState(0); // for delete refresh
+  const [version, setVersion] = useState(0); 
 
   useEffect(() => {
     const loadClient=async () =>{
@@ -72,7 +72,7 @@ const AddWorkoutPage: React.FC = () => {
 
     await service.deleteExercise(clientIdNumber, workoutId!, selectedExerciseId);
     setSelectedExerciseId(null);
-    setVersion(v => v + 1); // trigger refresh
+    setVersion(v => v + 1);
   };
 
   useEffect(() => {

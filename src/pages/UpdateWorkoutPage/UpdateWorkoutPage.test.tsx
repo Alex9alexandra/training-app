@@ -53,7 +53,6 @@ describe("UpdateWorkoutPage", () => {
       </MemoryRouter>
     );
 
-  // 🔴 LOADING / CLIENT NULL
 
   it("shows loading when client is null", async () => {
     mockService.getClient.mockResolvedValue(null);
@@ -64,7 +63,6 @@ describe("UpdateWorkoutPage", () => {
     expect(await screen.findByText(/loading/i)).toBeInTheDocument();
   });
 
-  // 🔴 TRACKER COVERAGE
 
   it("tracks page on mount", async () => {
     mockService.getClient.mockResolvedValue({ id: 1 });
@@ -79,7 +77,6 @@ describe("UpdateWorkoutPage", () => {
     });
   });
 
-  // 🔴 RENDER WORKOUT EXERCISES
 
   it("renders exercises from workout", async () => {
     mockService.getClient.mockResolvedValue({ id: 1 });
@@ -100,7 +97,6 @@ describe("UpdateWorkoutPage", () => {
     expect(await screen.findByText("Push Ups")).toBeInTheDocument();
   });
 
-  // 🔴 ADD EXERCISE NAVIGATION
 
   it("navigates to add exercise page", async () => {
     mockService.getClient.mockResolvedValue({ id: 1 });
@@ -115,7 +111,6 @@ describe("UpdateWorkoutPage", () => {
     );
   });
 
-  // 🔴 DELETE WITHOUT SELECTION
 
   it("shows alert when deleting without selection", async () => {
     mockService.getClient.mockResolvedValue({ id: 1 });
@@ -130,7 +125,6 @@ describe("UpdateWorkoutPage", () => {
     );
   });
 
-  // 🔴 DELETE WITH SELECTION
 
   it("deletes selected exercise correctly", async () => {
     mockService.getClient.mockResolvedValue({ id: 1 });
@@ -167,7 +161,6 @@ describe("UpdateWorkoutPage", () => {
     );
   });
 
-  // 🔴 LOCATION KEY REFRESH BRANCH
 
   it("re-runs effect when location key changes", async () => {
     mockService.getClient.mockResolvedValue({ id: 1 });

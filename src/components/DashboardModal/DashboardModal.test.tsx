@@ -3,7 +3,6 @@ import { render, screen, waitFor, fireEvent } from "@testing-library/react";
 import DashboardModal from "./DashboardModal";
 import { useAppContext } from "../../context/AppContext";
 
-// mock context
 vi.mock("../../context/AppContext", () => ({
     useAppContext: vi.fn()
 }));
@@ -24,7 +23,6 @@ describe("DashboardModal", () => {
         });
     });
 
-    // ---------------- LOADING STATE ----------------
 
     it("shows loading initially", () => {
         let resolveFn: any;
@@ -37,10 +35,8 @@ describe("DashboardModal", () => {
 
         render(<DashboardModal onClose={onClose} />);
 
-        // loading should exist immediately on first render
         expect(screen.getByText(/loading/i)).toBeTruthy();
 
-        // cleanup resolve
         resolveFn({
             totalClients: 0,
             mostActiveClient: { name: "", workouts: 0 },
@@ -49,7 +45,6 @@ describe("DashboardModal", () => {
         });
     });
 
-    // ---------------- SUCCESS RENDER ----------------
 
     it("renders statistics correctly", async () => {
         mockService.getStatistics.mockResolvedValue({
@@ -74,7 +69,6 @@ describe("DashboardModal", () => {
         expect(screen.getByText(/Average Workouts/i)).toBeTruthy();
     });
 
-    // ---------------- BAR RENDERING ----------------
 
     it("renders activity bars based on data", async () => {
         mockService.getStatistics.mockResolvedValue({
@@ -95,7 +89,6 @@ describe("DashboardModal", () => {
         });
     });
 
-    // ---------------- CLOSE BUTTON ----------------
 
     it("calls onClose when close button is clicked", async () => {
         mockService.getStatistics.mockResolvedValue({
@@ -114,7 +107,6 @@ describe("DashboardModal", () => {
         expect(onClose).toHaveBeenCalled();
     });
 
-    // ---------------- EDGE CASE (MAX SAFE) ----------------
 
     it("handles single client correctly", async () => {
         mockService.getStatistics.mockResolvedValue({

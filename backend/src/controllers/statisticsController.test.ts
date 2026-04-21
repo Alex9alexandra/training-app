@@ -1,6 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
-// mock service instance
 vi.mock("../service/statisticsServiceInstance", () => {
   return {
     statisticsService: {
@@ -28,8 +27,6 @@ describe("Statistics Controller", () => {
       json: vi.fn(),
     };
   });
-
-  // ---------------- SUCCESS CASE ----------------
 
   it("returns 200 and statistics data", () => {
     const mockStats = {
