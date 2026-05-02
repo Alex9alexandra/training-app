@@ -115,6 +115,7 @@ export class ClientMemoryRepo implements IClientRepo{
         const makeMeasurements = (baseWeight: number, trend: number) => {
             return [
                 {
+                    id: 1,
                     height: 175,
                     weight: baseWeight,
                     muscularMassPercent: 32,
@@ -124,6 +125,7 @@ export class ClientMemoryRepo implements IClientRepo{
                     date: getMondayDate(4)
                 },
                 {
+                    id: 2,
                     height: 175,
                     weight: baseWeight + trend,
                     muscularMassPercent: 33,
@@ -133,6 +135,7 @@ export class ClientMemoryRepo implements IClientRepo{
                     date: getMondayDate(2)
                 },
                 {
+                    id: 3,
                     height: 175,
                     weight: baseWeight + trend * 2,
                     muscularMassPercent: 34,

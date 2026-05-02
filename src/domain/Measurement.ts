@@ -1,4 +1,5 @@
 export interface Measurement {
+  id: number;
   height: number;
   weight: number;
   muscularMassPercent: number;

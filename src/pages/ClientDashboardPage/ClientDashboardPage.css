@@ -1,26 +1,15 @@
-.measurements-table-page{
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 20px;
-
-    width: 100%;
-    max-width: 100%;
-    flex: 1;
-
-    padding: 20px;
-}
-
 .measurements-table{
-    width: 100;
-    border-collapse: collapse;
+    width: 100%;
 
-    font-family: 'Inter', sans-serif;
+    border-collapse: collapse;
 
     background-color: rgba(255,255,255,0.05);
 
     border-radius: 20px;
+
     overflow: hidden;
+
+    font-family: 'Inter', sans-serif;
 }
 
 .measurements-table th{
@@ -28,32 +17,23 @@
 
     color: black;
 
-    font-size: 18px;
-    font-weight: bold;
+    padding: 14px;
 
-    padding: 16px;
+    font-weight: bold;
 
     text-align: center;
 }
 
 .measurements-table td{
-    padding: 14px;
+    padding: 12px;
 
     text-align: center;
 
     color: white;
-
-    font-size: 16px;
 
     border-bottom: 1px solid rgba(255,255,255,0.1);
 }
 
 .measurements-table tr:hover{
     background-color: rgba(255,255,255,0.08);
-
-    transition: 0.2s;
-}
-
-.measurements-table tr:last-child td{
-    border-bottom: none;
 }

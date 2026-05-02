@@ -2,6 +2,7 @@ import type { IClientRepo } from "../repository/IClientRepo";
 import type {Client} from "../domain/Client";
 import type {Exercise} from "../domain/Exercise";
 import type {Workout} from "../domain/Workout";
+import { Measurement } from "../domain/Measurement";
 
 export class ClientService{
     
@@ -53,6 +54,65 @@ export class ClientService{
         if (index === -1) return null;
         const deleted = workout.exercises[index]!;
         workout.exercises.splice(index, 1);
+        return deleted;
+    }
+
+    // Measurement op
+
+    getMeasurements(clientId: number) {
+        const client = this.getClient(clientId);
+
+        if (!client) {
+            return null;
+        }
+
+        return [...client.measurements].sort((a, b) => {
+
+            const [dayA, monthA, yearA] = a.date.split("/").map(Number);
+            const [dayB, monthB, yearB] = b.date.split("/").map(Number);
+
+            const dateA = new Date(yearA!, monthA! - 1, dayA);
+            const dateB = new Date(yearB!, monthB! - 1, dayB);
+
+            return dateB.getTime() - dateA.getTime();
+        })??[];
+    }
+
+    addMeasurement(clientId: number, measurement: Measurement): Measurement | null {
+        const client = this.getClient(clientId);
+
+        if (!client) {
+            return null;
+        }
+
+        if (!client.measurements) {
+            client.measurements = [];
+        }
+
+        client.measurements.push(measurement);
+
+        return measurement;
+    }
+
+    deleteMeasurement(clientId: number, measurementId: number): Measurement | null {
+        const client = this.getClient(clientId);
+
+        if (!client || !client.measurements) {
+            return null;
+        }
+
+        const index = client.measurements.findIndex(
+            m => m.id === measurementId
+        );
+
+        if (index === -1) {
+            return null;
+        }
+
+        const deleted = client.measurements[index]!;
+
+        client.measurements.splice(index, 1);
+
         return deleted;
     }
 }

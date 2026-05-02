@@ -4,6 +4,7 @@ import type {Exercise} from "../domain/Exercise";
 const API_URL = "http://localhost:3000";
 import { operationQueue } from "../offline/offlineQueue";
 import {sharedRepo} from "../repository/LocalClientRepo";
+import type { Measurement } from "../domain/Measurement";
 
 export class ClientService {
   async addClient(client: Client) {
@@ -279,4 +280,51 @@ export class ClientService {
 
     }
   }
+
+  async getMeasurements(clientId: number) {
+    try {
+
+      const res = await fetch(
+        `${API_URL}/clients/${clientId}/measurements`
+      );
+
+      if (!res.ok) {
+        throw new Error("Server error");
+      }
+
+      return await res.json();
+
+    } catch (error) {
+
+      console.log("Offline -> fetching measurements locally");
+
+      const client = sharedRepo.getAll().find(
+        c => c.id === clientId
+      );
+
+      if (!client) {
+        throw new Error("Client not found");
+      }
+
+      return client.measurements;
+    }
+  }
+
+  async addMeasurement(clientId: number, measurement: Measurement) {
+    const res = await fetch(
+        `${API_URL}/clients/${clientId}/measurements`,
+        {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(measurement)
+        }
+    );
+
+    if (!res.ok) {
+      throw new Error("Failed to add measurement");
+    }
+
+    return await res.json();
+  }
+
 }

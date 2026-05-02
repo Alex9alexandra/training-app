@@ -21,6 +21,7 @@ export function createFakeClient() {
   };
 
   const measurement: Measurement = {
+    id: faker.number.int({ min: 1000, max: 9999 }),
     height: faker.number.int({ min: 150, max: 200 }),
     weight: faker.number.float({ min: 50, max: 120, fractionDigits: 1 }),
 

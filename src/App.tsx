@@ -7,6 +7,7 @@ import AddExercisePage from "./pages/AddExercisePage/AddExercisePage"
 import UpdateWorkoutPage from "./pages/UpdateWorkoutPage/UpdateWorkoutPage";
 import { syncOperations } from "./offline/syncService";
 import { useEffect } from "react";
+import MeasurementsTable from "./pages/MeasurementsTablePage/MeasurementsTablePage";
 function App() {
 
   async function isBackendAlive(): Promise<boolean> {
@@ -69,6 +70,7 @@ function App() {
           <Route path="/workout/:clientId/:workoutId/add-exercise" element={<AddExercisePage />} />
           <Route path="/workout/update/:clientId/:workoutId" element={<UpdateWorkoutPage />} />
           <Route path="/workout/:clientId/:workoutId" element={<AddWorkoutPage />} />
+          <Route path="/client/:id/measurements" element={<MeasurementsTable />} />
         </Route> 
       </Routes> 
     </BrowserRouter>
