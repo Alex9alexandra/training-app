@@ -17,7 +17,6 @@ import groupClassRoutes from "./routes/groupClassRoutes";
 import { monitoringMiddleware } from "./middleware/monitoringMiddleware";
 import monitoringRoutes from "./routes/monitoringRoutes";
 
-
 const app = express();
 app.use(monitoringMiddleware);
 app.use(cors({
