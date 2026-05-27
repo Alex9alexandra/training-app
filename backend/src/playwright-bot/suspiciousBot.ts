@@ -1,7 +1,7 @@
 import https from "https";
 import fetch from "node-fetch";
 
-const BASE_URL = "https://192.168.0.102:3000";
+const BASE_URL = process.env.API_BASE_URL || "http://localhost:3000";
 
 const agent = new https.Agent({ rejectUnauthorized: false });
 

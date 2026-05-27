@@ -15,7 +15,11 @@
     "test:frontend": "vitest --coverage --dir src",
     "test:backend": "vitest --coverage --dir backend",
 
-    "test:login_register": "vitest run --coverage backend/src/middleware/authMiddleware.test.ts src/auth/authFetch.test.ts src/auth/authStore.test.ts src/auth/inactivityTimer.test.ts "
+    "test:login_register": "vitest run --coverage backend/src/middleware/authMiddleware.test.ts src/auth/authFetch.test.ts src/auth/authStore.test.ts src/auth/inactivityTimer.test.ts ",
+
+    "backend:build": "tsc --project backend/tsconfig.json",
+    "backend:start": "node backend/src/server.ts"
+
   },
   "dependencies": {
     "@faker-js/faker": "^10.4.0",
