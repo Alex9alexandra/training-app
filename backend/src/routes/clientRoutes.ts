@@ -1,7 +1,10 @@
 import {Router} from "express";
 import {getAllClients,getClient,addClient,updateClient,deleteClient} from "../controllers/clientController";
+import { authMiddleware } from "../middleware/authMiddleware";
 
 const router=Router();
+
+router.use(authMiddleware);
 
 router.get("/",getAllClients);
 router.get("/:id",getClient);

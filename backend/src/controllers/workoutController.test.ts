@@ -1,16 +1,12 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
-
-vi.mock("../service/clientServiceInstance", () => {
-  return {
-    clientService: {
-      getWorkouts: vi.fn(),
-      addWorkout: vi.fn(),
-      deleteWorkout: vi.fn(),
-    }
-  };
-});
-
+vi.mock("../service/clientServiceInstance", () => ({
+  clientService: {
+    getWorkouts: vi.fn(),
+    addWorkout: vi.fn(),
+    deleteWorkout: vi.fn(),
+  },
+}));
 
 vi.mock("../validators/idValidators", () => ({
   validateId: vi.fn(),
@@ -20,196 +16,167 @@ vi.mock("../validators/workoutValidators", () => ({
   validateWorkout: vi.fn(),
 }));
 
-import {
-  getWorkouts,
-  addWorkout,
-  deleteWorkout,
-} from "../controllers/workoutController";
-
+import { getWorkouts, addWorkout, deleteWorkout } from "../controllers/workoutController";
 import { validateId } from "../validators/idValidators";
 import { validateWorkout } from "../validators/workoutValidators";
 import { clientService } from "../service/clientServiceInstance";
 
 const mockService = clientService as any;
+
 describe("Workout Controller", () => {
   let req: any;
   let res: any;
 
   beforeEach(() => {
     vi.clearAllMocks();
-
-    req = {
-      params: {},
-      query: {},
-      body: {},
-    };
-
+    req = { params: {}, query: {}, body: {} };
     res = {
       status: vi.fn().mockReturnThis(),
-      json: vi.fn(),
+      json: vi.fn().mockReturnThis(),
     };
   });
 
-
-  it("returns 400 if clientId invalid", () => {
+  it("getWorkouts: returns 400 if clientId invalid", async () => {
     req.params = { clientId: "abc" };
     (validateId as any).mockReturnValue("invalid id");
 
-    getWorkouts(req, res);
+    await getWorkouts(req, res);
 
     expect(res.status).toHaveBeenCalledWith(400);
   });
 
-  it("returns 400 if page invalid", () => {
+  it("getWorkouts: returns 400 if page invalid", async () => {
     req.params = { clientId: "1" };
     req.query = { page: "-1", limit: "5" };
-
     (validateId as any).mockReturnValue(null);
 
-    getWorkouts(req, res);
+    await getWorkouts(req, res);
 
     expect(res.status).toHaveBeenCalledWith(400);
   });
 
-  it("returns 400 if limit invalid", () => {
+  it("getWorkouts: returns 400 if limit invalid", async () => {
     req.params = { clientId: "1" };
     req.query = { page: "1", limit: "0" };
-
     (validateId as any).mockReturnValue(null);
 
-    getWorkouts(req, res);
+    await getWorkouts(req, res);
 
     expect(res.status).toHaveBeenCalledWith(400);
   });
 
-  it("returns 404 if workouts not found", () => {
+  it("getWorkouts: returns 404 if client not found", async () => {
     req.params = { clientId: "1" };
     req.query = { page: "1", limit: "5" };
-
     (validateId as any).mockReturnValue(null);
-    mockService.getWorkouts.mockReturnValue(null);
+    mockService.getWorkouts.mockResolvedValueOnce(null);
 
-    getWorkouts(req, res);
+    await getWorkouts(req, res);
 
     expect(res.status).toHaveBeenCalledWith(404);
   });
 
-  it("returns paginated workouts (success path)", () => {
+  it("getWorkouts: returns paginated workouts", async () => {
     req.params = { clientId: "1" };
     req.query = { page: "1", limit: "2" };
-
     (validateId as any).mockReturnValue(null);
 
-    const workouts = [
-      { id: 1 },
-      { id: 2 },
-      { id: 3 },
-    ];
+    const workouts = [{ id: 1 }, { id: 2 }, { id: 3 }];
+    mockService.getWorkouts.mockResolvedValueOnce(workouts);
 
-    mockService.getWorkouts.mockReturnValue(workouts);
-
-    getWorkouts(req, res);
+    await getWorkouts(req, res);
 
     expect(res.json).toHaveBeenCalledWith({
-      data: workouts.slice(0, 2),
+      data: [{ id: 1 }, { id: 2 }],
       total: 3,
       page: 1,
       totalPages: 2,
     });
   });
 
-  it("returns 400 if clientId invalid", () => {
+  it("addWorkout: returns 400 if clientId invalid", async () => {
     req.params = { clientId: "abc" };
     (validateId as any).mockReturnValue("bad id");
 
-    addWorkout(req, res);
+    await addWorkout(req, res);
 
     expect(res.status).toHaveBeenCalledWith(400);
   });
 
-  it("returns 400 if workout invalid", () => {
+  it("addWorkout: returns 400 if workout invalid", async () => {
     req.params = { clientId: "1" };
     req.body = {};
-
     (validateId as any).mockReturnValue(null);
     (validateWorkout as any).mockReturnValue("invalid workout");
 
-    addWorkout(req, res);
+    await addWorkout(req, res);
 
     expect(res.status).toHaveBeenCalledWith(400);
   });
 
-  it("returns 404 if service fails to add workout", () => {
+  it("addWorkout: returns 404 if service returns null", async () => {
     req.params = { clientId: "1" };
     req.body = { name: "W1" };
-
     (validateId as any).mockReturnValue(null);
     (validateWorkout as any).mockReturnValue(null);
-    mockService.addWorkout.mockReturnValue(null);
+    mockService.addWorkout.mockResolvedValueOnce(null);
 
-    addWorkout(req, res);
+    await addWorkout(req, res);
 
     expect(res.status).toHaveBeenCalledWith(404);
   });
 
-  it("returns 201 when workout added", () => {
+  it("addWorkout: returns 201 with added workout", async () => {
     req.params = { clientId: "1" };
     req.body = { name: "W1" };
-
     const workout = { id: 10, name: "W1" };
-
     (validateId as any).mockReturnValue(null);
     (validateWorkout as any).mockReturnValue(null);
-    mockService.addWorkout.mockReturnValue(workout);
+    mockService.addWorkout.mockResolvedValueOnce(workout);
 
-    addWorkout(req, res);
+    await addWorkout(req, res);
 
     expect(res.status).toHaveBeenCalledWith(201);
     expect(res.json).toHaveBeenCalledWith(workout);
   });
 
-
-  it("returns 400 if clientId invalid", () => {
+  it("deleteWorkout: returns 400 if clientId invalid", async () => {
     req.params = { clientId: "abc", workoutId: "1" };
     (validateId as any).mockReturnValue("bad");
 
-    deleteWorkout(req, res);
+    await deleteWorkout(req, res);
 
     expect(res.status).toHaveBeenCalledWith(400);
   });
 
-  it("returns 400 if workoutId invalid", () => {
+  it("deleteWorkout: returns 400 if workoutId invalid", async () => {
     req.params = { clientId: "1", workoutId: "abc" };
-
     (validateId as any)
       .mockReturnValueOnce(null)
       .mockReturnValueOnce("bad workout");
 
-    deleteWorkout(req, res);
+    await deleteWorkout(req, res);
 
     expect(res.status).toHaveBeenCalledWith(400);
   });
 
-  it("returns 404 if delete fails", () => {
+  it("deleteWorkout: returns 404 if service returns null", async () => {
     req.params = { clientId: "1", workoutId: "10" };
-
     (validateId as any).mockReturnValue(null);
-    mockService.deleteWorkout.mockReturnValue(null);
+    mockService.deleteWorkout.mockResolvedValueOnce(null);
 
-    deleteWorkout(req, res);
+    await deleteWorkout(req, res);
 
     expect(res.status).toHaveBeenCalledWith(404);
   });
 
-  it("returns 200 when delete succeeds", () => {
+  it("deleteWorkout: returns 200 with deleted workout", async () => {
     req.params = { clientId: "1", workoutId: "10" };
-
     const deleted = { id: 10, name: "W1" };
-
     (validateId as any).mockReturnValue(null);
-    mockService.deleteWorkout.mockReturnValue(deleted);
+    mockService.deleteWorkout.mockResolvedValueOnce(deleted);
 
-    deleteWorkout(req, res );
+    await deleteWorkout(req, res);
 
     expect(res.status).toHaveBeenCalledWith(200);
     expect(res.json).toHaveBeenCalledWith(deleted);

@@ -172,4 +172,72 @@ describe("AddExercisePage", () => {
       "All fields are required!"
     );
   });
+
+  it("shows backend error message when addExercise fails with response message", async () => {
+    mockService.addExercise.mockRejectedValue({
+      response: {
+        data: {
+          message: "Exercise already exists",
+        },
+      },
+    });
+
+    renderPage();
+
+    fireEvent.change(screen.getByLabelText(/name/i), {
+      target: { value: "Squat" },
+    });
+
+    fireEvent.change(screen.getByLabelText(/sets/i), {
+      target: { value: "3" },
+    });
+
+    fireEvent.change(screen.getByLabelText(/reps/i), {
+      target: { value: "10" },
+    });
+
+    fireEvent.change(screen.getByLabelText(/weight/i), {
+      target: { value: "100" },
+    });
+
+    fireEvent.click(screen.getByText(/save/i));
+
+    await waitFor(() => {
+      expect(window.alert).toHaveBeenCalledWith(
+        "Exercise already exists"
+      );
+    });
+  });
+
+  it("shows fallback error message when addExercise fails without response", async () => {
+    mockService.addExercise.mockRejectedValue(new Error("Network"));
+
+    renderPage();
+
+    fireEvent.change(screen.getByLabelText(/name/i), {
+      target: { value: "Squat" },
+    });
+
+    fireEvent.change(screen.getByLabelText(/sets/i), {
+      target: { value: "3" },
+    });
+
+    fireEvent.change(screen.getByLabelText(/reps/i), {
+      target: { value: "10" },
+    });
+
+    fireEvent.change(screen.getByLabelText(/weight/i), {
+      target: { value: "100" },
+    });
+
+    fireEvent.click(screen.getByText(/save/i));
+
+    await waitFor(() => {
+      expect(window.alert).toHaveBeenCalledWith(
+        "Failed to add exercise"
+      );
+    });
+  });
+
+
 });

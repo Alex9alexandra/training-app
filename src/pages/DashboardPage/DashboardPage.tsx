@@ -6,22 +6,28 @@ import "./DashboardPage.css"
 import {useNavigate} from "react-router-dom";
 import type {Client} from "../../domain/Client";
 import DashboardModal from "../../components/DashboardModal/DashboardModal";
+import GroupClassesModal from "../../components/GroupClassesModal/GroupClassesModal";
+import SecurityModal from "../../components/SecurityModal/SecurityModal";
+const API_URL = import.meta.env.VITE_API_BASE_URL;
 const DashboardPage: React.FC = () => {
   const {service,tracker}=useAppContext();
   const activity = tracker.getData();
   const [showStats, setShowStats] = useState(false);
+  const [showClasses, setShowClasses] = useState(false);
+  const [showSecurity, setShowSecurity] = useState(false);
   const [clients, setClients] = useState({
     data: [] as Client[],
     totalPages: 1,
     page: 1
   });
+  const [search, setSearch] = useState("");
   const navigate=useNavigate();
   const handleView = (id: number) => {
     navigate(`/client/${id}`);
   };
 
-  const loadClients = async (pageNumber: number) => {
-    const data = await service.getAllClients(pageNumber,5);
+  const loadClients = async (pageNumber: number, searchTerm:string=search) => {
+    const data = await service.getAllClients(pageNumber,5,searchTerm);
     setClients(data);
   };
   useEffect(() => {
@@ -58,19 +64,30 @@ const DashboardPage: React.FC = () => {
 
         <div className="title"><Title title="CLIENT'S TABLE" /></div>
 
+        <input
+          className="search-bar"
+          type="text"
+          placeholder="Search by name..."
+          value={search}
+          onChange={(e) => {
+            setSearch(e.target.value);
+            loadClients(1, e.target.value);
+          }}
+        />
+
         <div className="table"><ClientTable clients={clients} onView={handleView} onPageChange={(newPage)=>loadClients(newPage)} page={clients.page} /></div>
 
         <div style={{display:"flex",gap:"10px",alignSelf:"center"}}>
           <button style={{width:"100px"}}
             className="statisticsBTN"
-            onClick={() => {fetch("http://localhost:3000/generator/start", { method: "POST" });console.log("Generator started");}}
+            onClick={() => {fetch(`${API_URL}/generator/start`, { method: "POST" });console.log("Generator started");}}
           >
             Start Generator
           </button>
 
           <button style={{width:"100px"}}
             className="statisticsBTN"
-            onClick={() => fetch("http://localhost:3000/generator/stop", { method: "POST" })}
+            onClick={() => fetch(`${API_URL}/generator/stop`, { method: "POST" })}
           >
             Stop Generator
           </button>
@@ -99,6 +116,20 @@ const DashboardPage: React.FC = () => {
           <DashboardModal
             onClose={() => setShowStats(false)}
           />
+        )}
+
+        <button className="statisticsBTN" onClick={() => setShowClasses(true)}>
+          View Group Classes
+        </button>
+        {showClasses && (
+          <GroupClassesModal onClose={() => setShowClasses(false)} />
+        )}
+
+        <button className="statisticsBTN" onClick={() => setShowSecurity(true)}>
+          AI Security Monitor
+        </button>
+        {showSecurity && (
+          <SecurityModal onClose={() => setShowSecurity(false)} />
         )}
 
       </div>

@@ -3,12 +3,9 @@ import {clientService} from "../service/clientServiceInstance";
 import { validateExercise } from "../validators/exerciseValidators";
 import {validateId} from "../validators/idValidators";
 
-//400 bad input
-//404 not found
-//200 deleted
-//201 added
 
-export const addExercise=(req: Request,res: Response)=>{
+
+export const addExercise=async (req: Request,res: Response)=>{
     const {clientId,workoutId}=req.params;
 
     const idError1=validateId(clientId);
@@ -26,14 +23,14 @@ export const addExercise=(req: Request,res: Response)=>{
         return res.status(400).json({message:exerciseError});
     }
 
-    const added=clientService.addExercise(Number(clientId), Number(workoutId), req.body);
+    const added=await clientService.addExercise(Number(clientId), Number(workoutId), req.body);
     if(!added){
         return res.status(404).json({message:"Client or workout not found"});
     }
     return res.status(201).json(added);
 };
 
-export const deleteExercise=(req: Request,res: Response)=>{
+export const deleteExercise=async (req: Request,res: Response)=>{
     const idError=validateId(req.params.clientId);
     if(idError){
         return res.status(400).json({message:idError});
@@ -52,7 +49,7 @@ export const deleteExercise=(req: Request,res: Response)=>{
     }
     const exerciseId=Number(req.params.exerciseId);
 
-    const deleted=clientService.deleteExercise(clientId, workoutId, exerciseId);
+    const deleted=await clientService.deleteExercise(clientId, workoutId, exerciseId);
     if(!deleted){
         return res.status(404).json({message:"Client, workout or exercise not found"});
     }

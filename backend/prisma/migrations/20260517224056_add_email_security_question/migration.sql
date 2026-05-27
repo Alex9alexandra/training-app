@@ -1,0 +1,25 @@
+
+BEGIN TRY
+
+BEGIN TRAN;
+
+-- AlterTable
+ALTER TABLE [dbo].[User] ADD [email] NVARCHAR(1000),
+[securityAnswer] NVARCHAR(1000),
+[securityQuestion] NVARCHAR(1000);
+
+-- CreateIndex
+ALTER TABLE [dbo].[User] ADD CONSTRAINT [User_email_key] UNIQUE NONCLUSTERED ([email]);
+
+COMMIT TRAN;
+
+END TRY
+BEGIN CATCH
+
+IF @@TRANCOUNT > 0
+BEGIN
+    ROLLBACK TRAN;
+END;
+THROW
+
+END CATCH

@@ -43,21 +43,15 @@ describe("Client Controller - FULL COVERAGE", () => {
     vi.clearAllMocks();
   });
 
-
-  it("getAllClients returns paginated data", () => {
-    (clientService.getAllClients as any).mockReturnValue([
-      { id: 1 },
-      { id: 2 },
-      { id: 3 },
+  it("getAllClients returns paginated data", async () => {
+    (clientService.getAllClients as any).mockResolvedValueOnce([
+      { id: 1 }, { id: 2 }, { id: 3 },
     ]);
 
-    const req = {
-      query: { page: "1", limit: "2" },
-    } as unknown as Request;
-
+    const req = { query: { page: "1", limit: "2" } } as unknown as Request;
     const res = mockRes();
 
-    getAllClients(req, res);
+    await getAllClients(req, res);
 
     expect(res.json).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -68,171 +62,165 @@ describe("Client Controller - FULL COVERAGE", () => {
     );
   });
 
-  it("getAllClients returns 400 for invalid page", () => {
-    const req = {
-      query: { page: "-1", limit: "2" },
-    } as unknown as Request;
-
+  it("getAllClients returns 400 for invalid page", async () => {
+    const req = { query: { page: "-1", limit: "2" } } as unknown as Request;
     const res = mockRes();
 
-    getAllClients(req, res);
+    await getAllClients(req, res);
 
     expect(res.status).toHaveBeenCalledWith(400);
   });
 
-  it("getAllClients returns 400 for invalid limit", () => {
-    const req = {
-      query: { page: "1", limit: "0" },
-    } as unknown as Request;
-
+  it("getAllClients returns 400 for invalid limit", async () => {
+    const req = { query: { page: "1", limit: "0" } } as unknown as Request;
     const res = mockRes();
 
-    getAllClients(req, res);
+    await getAllClients(req, res);
 
     expect(res.status).toHaveBeenCalledWith(400);
   });
 
-  it("getClient returns 400 if id invalid", () => {
+  it("getClient returns 400 if id invalid", async () => {
     (validateId as any).mockReturnValue("invalid id");
 
     const req = { params: { id: "abc" } } as any;
     const res = mockRes();
 
-    getClient(req, res);
+    await getClient(req, res);
 
     expect(res.status).toHaveBeenCalledWith(400);
   });
 
-  it("getClient returns 404 if not found", () => {
+  it("getClient returns 404 if not found", async () => {
     (validateId as any).mockReturnValue(null);
-    (clientService.getClient as any).mockReturnValue(null);
+    (clientService.getClient as any).mockResolvedValueOnce(null);
 
     const req = { params: { id: "1" } } as any;
     const res = mockRes();
 
-    getClient(req, res);
+    await getClient(req, res);
 
     expect(res.status).toHaveBeenCalledWith(404);
   });
 
-  it("getClient returns client if found", () => {
+  it("getClient returns client if found", async () => {
     (validateId as any).mockReturnValue(null);
-    (clientService.getClient as any).mockReturnValue({ id: 1 });
+    (clientService.getClient as any).mockResolvedValueOnce({ id: 1 });
 
     const req = { params: { id: "1" } } as any;
     const res = mockRes();
 
-    getClient(req, res);
+    await getClient(req, res);
 
     expect(res.json).toHaveBeenCalledWith({ id: 1 });
   });
 
-  it("addClient returns 400 if validation fails", () => {
+  it("addClient returns 400 if validation fails", async () => {
     (validateClient as any).mockReturnValue("error");
 
     const req = { body: {} } as any;
     const res = mockRes();
 
-    addClient(req, res);
+    await addClient(req, res);
 
     expect(res.status).toHaveBeenCalledWith(400);
   });
 
-  it("addClient returns 201 when successful", () => {
+  it("addClient returns 201 when successful", async () => {
     (validateClient as any).mockReturnValue(null);
-    (clientService.addClient as any).mockReturnValue({ id: 1 });
+    (clientService.addClient as any).mockResolvedValueOnce({ id: 1 });
 
     const req = { body: { name: "A" } } as any;
     const res = mockRes();
 
-    addClient(req, res);
+    await addClient(req, res);
 
     expect(res.status).toHaveBeenCalledWith(201);
     expect(res.json).toHaveBeenCalledWith({ id: 1 });
   });
 
-  it("updateClient returns 400 for invalid id", () => {
+  it("updateClient returns 400 for invalid id", async () => {
     (validateId as any).mockReturnValue("error");
 
     const req = { params: { id: "x" }, body: {} } as any;
     const res = mockRes();
 
-    updateClient(req, res);
+    await updateClient(req, res);
 
     expect(res.status).toHaveBeenCalledWith(400);
   });
 
-  it("updateClient returns 400 for invalid body", () => {
+  it("updateClient returns 400 for invalid body", async () => {
     (validateId as any).mockReturnValue(null);
     (validateClient as any).mockReturnValue("error");
 
     const req = { params: { id: "1" }, body: {} } as any;
     const res = mockRes();
 
-    updateClient(req, res);
+    await updateClient(req, res);
 
     expect(res.status).toHaveBeenCalledWith(400);
   });
 
-  it("updateClient returns 404 if not found", () => {
+  it("updateClient returns 404 if not found", async () => {
     (validateId as any).mockReturnValue(null);
     (validateClient as any).mockReturnValue(null);
-    (clientService.updateClient as any).mockReturnValue(false);
+    (clientService.updateClient as any).mockResolvedValueOnce(false);
 
     const req = { params: { id: "1" }, body: { id: 1 } } as any;
     const res = mockRes();
 
-    updateClient(req, res);
+    await updateClient(req, res);
 
     expect(res.status).toHaveBeenCalledWith(404);
   });
 
-  it("updateClient returns updated client", () => {
+  it("updateClient returns updated client", async () => {
     (validateId as any).mockReturnValue(null);
     (validateClient as any).mockReturnValue(null);
-    (clientService.updateClient as any).mockReturnValue(true);
+    (clientService.updateClient as any).mockResolvedValueOnce(true);
 
     const req = { params: { id: "1" }, body: { id: 1 } } as any;
     const res = mockRes();
 
-    updateClient(req, res);
+    await updateClient(req, res);
 
     expect(res.json).toHaveBeenCalledWith({ id: 1 });
   });
 
-  it("deleteClient returns 400 for invalid id", () => {
+  it("deleteClient returns 400 for invalid id", async () => {
     (validateId as any).mockReturnValue("error");
 
     const req = { params: { id: "x" } } as any;
     const res = mockRes();
 
-    deleteClient(req, res);
+    await deleteClient(req, res);
 
     expect(res.status).toHaveBeenCalledWith(400);
   });
 
-  it("deleteClient returns 404 if not found", () => {
+  it("deleteClient returns 404 if not found", async () => {
     (validateId as any).mockReturnValue(null);
-    (clientService.deleteClient as any).mockReturnValue(null);
+    (clientService.deleteClient as any).mockResolvedValueOnce(null);
 
     const req = { params: { id: "1" } } as any;
     const res = mockRes();
 
-    deleteClient(req, res);
+    await deleteClient(req, res);
 
     expect(res.status).toHaveBeenCalledWith(404);
   });
 
-  it("deleteClient returns 200 when successful", () => {
+  it("deleteClient returns 200 when successful", async () => {
     (validateId as any).mockReturnValue(null);
-    (clientService.deleteClient as any).mockReturnValue({ id: 1 });
+    (clientService.deleteClient as any).mockResolvedValueOnce({ id: 1 });
 
     const req = { params: { id: "1" } } as any;
     const res = mockRes();
 
-    deleteClient(req, res);
+    await deleteClient(req, res);
 
     expect(res.status).toHaveBeenCalledWith(200);
     expect(res.json).toHaveBeenCalledWith({ id: 1 });
   });
-}); 
+});

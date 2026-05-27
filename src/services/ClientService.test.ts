@@ -300,7 +300,6 @@ describe("Frontend ClientService", () => {
   it("deleteWorkout does nothing when client not found in local repo", async () => {
     global.fetch = vi.fn(() => Promise.reject("offline")) as any;
 
-    // Should not throw — the service silently skips if client is missing
     await expect(service.deleteWorkout(999, 10)).resolves.toBeUndefined();
   });
 
@@ -447,5 +446,87 @@ describe("Frontend ClientService", () => {
     const result = await service.getStatistics();
     expect(result.totalClients).toBe(0);
     expect(result.averageWorkouts).toBe(0);
+  });
+
+  it("getMeasurements returns data from server", async () => {
+    global.fetch = vi.fn(() =>
+      Promise.resolve({
+        ok: true,
+        json: () => Promise.resolve([{ id: 1, value: 70 }]),
+      })
+    ) as any;
+
+    const res = await service.getMeasurements(1);
+
+    expect(res).toEqual([{ id: 1, value: 70 }]);
+  });
+
+  it("getMeasurements falls back to local repo when server returns !ok", async () => {
+    sharedRepo.add(getMockClient());
+
+    global.fetch = vi.fn(() =>
+      Promise.resolve({
+        ok: false,
+        json: async () => ({}),
+      })
+    ) as any;
+
+    const res = await service.getMeasurements(1);
+
+    expect(res).toEqual([]);
+  });
+
+  it("getMeasurements falls back to local repo when offline", async () => {
+    sharedRepo.add(getMockClient());
+
+    global.fetch = vi.fn(() => Promise.reject("offline")) as any;
+
+    const res = await service.getMeasurements(1);
+
+    expect(res).toEqual([]);
+  });
+
+  it("getMeasurements throws when client not found locally", async () => {
+    global.fetch = vi.fn(() => Promise.reject("offline")) as any;
+
+    await expect(service.getMeasurements(999)).rejects.toThrow(
+      "Client not found"
+    );
+  });
+
+  it("addMeasurement returns server response on success", async () => {
+    global.fetch = vi.fn(() =>
+      Promise.resolve({
+        ok: true,
+        json: () => Promise.resolve({ id: 1, value: 80 }),
+      })
+    ) as any;
+
+    const res = await service.addMeasurement(1, {
+      id: 1,
+      value: 80,
+    } as any);
+
+    expect(res.id).toBe(1);
+  });
+
+  it("addMeasurement throws when server returns !ok", async () => {
+    global.fetch = vi.fn(() =>
+      Promise.resolve({
+        ok: false,
+      })
+    ) as any;
+
+    await expect(
+      service.addMeasurement(1, { id: 1 } as any)
+    ).rejects.toThrow("Failed to add measurement");
+  });
+
+  it("addMeasurement fails when offline (no catch handling)", async () => {
+    global.fetch = vi.fn(() => Promise.reject("offline")) as any;
+
+    await expect(
+      service.addMeasurement(1, { id: 1 } as any)
+    ).rejects.toBeDefined();
   });
 });

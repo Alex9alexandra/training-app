@@ -5,7 +5,7 @@ import { validateMeasurement } from "../validators/measurementValidators";
 import { validateId } from "../validators/idValidators";
 import { Measurement } from "../domain/Measurement";
 
-export const getMeasurements = (req: Request, res: Response) => {
+export const getMeasurements = async (req: Request, res: Response) => {
 
     const idError = validateId(req.params.clientId);
 
@@ -18,7 +18,7 @@ export const getMeasurements = (req: Request, res: Response) => {
 
     const clientId = Number(req.params.clientId);
 
-    const measurements = clientService.getMeasurements(clientId);
+    const measurements = await clientService.getMeasurements(clientId);
 
     if (measurements===null) {
         return res.status(404).json({
@@ -29,7 +29,7 @@ export const getMeasurements = (req: Request, res: Response) => {
     return res.status(200).json(measurements);
 };
 
-export const addMeasurement = (req: Request, res: Response) => {
+export const addMeasurement = async (req: Request, res: Response) => {
 
     const idError = validateId(req.params.clientId);
 
@@ -47,7 +47,7 @@ export const addMeasurement = (req: Request, res: Response) => {
 
     const measurement: Measurement = req.body;
 
-    const added = clientService.addMeasurement(clientId, measurement);
+    const added = await clientService.addMeasurement(clientId, measurement);
 
     if (!added) {
         return res.status(404).json({
@@ -58,7 +58,7 @@ export const addMeasurement = (req: Request, res: Response) => {
     return res.status(201).json(added);
 };
 
-export const deleteMeasurement = (req: Request, res: Response) => {
+export const deleteMeasurement = async (req: Request, res: Response) => {
 
     const idError = validateId(req.params.clientId);
 
@@ -75,7 +75,7 @@ export const deleteMeasurement = (req: Request, res: Response) => {
     const clientId = Number(req.params.clientId);
     const measurementId = Number(req.params.measurementId);
 
-    const deleted = clientService.deleteMeasurement(
+    const deleted = await clientService.deleteMeasurement(
         clientId,
         measurementId
     );

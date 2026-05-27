@@ -1,4 +1,5 @@
 import type { IClientRepo } from "../repository/IClientRepo";
+import type { PrismaClientRepo } from "../repository/PrismaClientRepo";
 import type {Client} from "../domain/Client";
 import type {Exercise} from "../domain/Exercise";
 import type {Workout} from "../domain/Workout";
@@ -6,113 +7,28 @@ import { Measurement } from "../domain/Measurement";
 
 export class ClientService{
     
-    private repo: IClientRepo;
-    constructor(repo: IClientRepo) {this.repo=repo;}
+    private repo: PrismaClientRepo;
+    constructor(repo: PrismaClientRepo) {this.repo=repo;}
 
-    //Client op
-    addClient(client: Client) { return this.repo.add(client); }
-    getAllClients(): Client[] { return this.repo.getAll(); }
-    getClient(id: number): Client | undefined { return this.repo.getById(id); }
-    updateClient(client: Client) { return this.repo.update(client); }
-    deleteClient(id: number) { return this.repo.delete(id); }
+    async addClient(client: Client) { return this.repo.addAsync(client); }
+    async getAllClients(search: string="") { return this.repo.getAllAsync(search); }
+    async getClient(id: number) { return this.repo.getByIdAsync(id); }
+    async updateClient(client: Client) { return this.repo.updateAsync(client); }
+    async deleteClient(id: number) { return this.repo.deleteAsync(id); }
 
-    //Workout op
-    addWorkout(clientId: number, workout: Workout): Workout|null {
-    const client = this.getClient(clientId);
-    if (!client) return null;
-    client.workouts.push(workout);
-    return workout;
-    }
+    async addWorkout(clientId: number, workout: Workout) { return this.repo.addWorkoutAsync(clientId, workout); }
+    async getWorkouts(clientId: number) { return this.repo.getWorkoutsAsync(clientId); }
+    async deleteWorkout(clientId: number, workoutId: number) { return this.repo.deleteWorkoutAsync(clientId, workoutId); }
 
-    getWorkouts(clientId: number): Workout[] | undefined {
-        const client = this.getClient(clientId);
-        return client?.workouts;
-    }
 
-    deleteWorkout(clientId: number, workoutId: number): Workout | null {
-        const client = this.getClient(clientId);
-        if (!client) return null;
-        const index = client.workouts.findIndex(w => w.id === workoutId);
-        if (index === -1) return null;
-        const deleted = client.workouts[index]!;
-        client.workouts.splice(index, 1);
-        return deleted;
-    }
+    async addExercise(clientId: number, workoutId: number, exercise: Exercise) { return this.repo.addExerciseAsync(clientId, workoutId, exercise); }
+    async deleteExercise(clientId: number, workoutId: number, exerciseId: number) { return this.repo.deleteExerciseAsync(clientId, workoutId, exerciseId); }
 
-    //Exercise op
-     addExercise(clientId: number, workoutId: number, exercise: Exercise): Exercise | null {
-        const workout = this.getWorkouts(clientId)?.find(w => w.id === workoutId);
-        if (!workout) return null;
-        workout.exercises.push(exercise);
-        return exercise;
-    }
 
-    deleteExercise(clientId: number, workoutId: number, exerciseId: number): Exercise | null {
-        const workout = this.getWorkouts(clientId)?.find(w => w.id === workoutId);
-        if (!workout) return null;
-        const index = workout.exercises.findIndex(e => e.id === exerciseId);
-        if (index === -1) return null;
-        const deleted = workout.exercises[index]!;
-        workout.exercises.splice(index, 1);
-        return deleted;
-    }
 
-    // Measurement op
+    async getMeasurements(clientId: number) { return this.repo.getMeasurementsAsync(clientId); }
+    async addMeasurement(clientId: number, measurement: Measurement) { return this.repo.addMeasurementAsync(clientId, measurement); }
+    async deleteMeasurement(clientId: number, measurementId: number) { return this.repo.deleteMeasurementAsync(clientId, measurementId); }
 
-    getMeasurements(clientId: number) {
-        const client = this.getClient(clientId);
-
-        if (!client) {
-            return null;
-        }
-
-        return [...client.measurements].sort((a, b) => {
-
-            const [dayA, monthA, yearA] = a.date.split("/").map(Number);
-            const [dayB, monthB, yearB] = b.date.split("/").map(Number);
-
-            const dateA = new Date(yearA!, monthA! - 1, dayA);
-            const dateB = new Date(yearB!, monthB! - 1, dayB);
-
-            return dateB.getTime() - dateA.getTime();
-        })??[];
-    }
-
-    addMeasurement(clientId: number, measurement: Measurement): Measurement | null {
-        const client = this.getClient(clientId);
-
-        if (!client) {
-            return null;
-        }
-
-        if (!client.measurements) {
-            client.measurements = [];
-        }
-
-        client.measurements.push(measurement);
-
-        return measurement;
-    }
-
-    deleteMeasurement(clientId: number, measurementId: number): Measurement | null {
-        const client = this.getClient(clientId);
-
-        if (!client || !client.measurements) {
-            return null;
-        }
-
-        const index = client.measurements.findIndex(
-            m => m.id === measurementId
-        );
-
-        if (index === -1) {
-            return null;
-        }
-
-        const deleted = client.measurements[index]!;
-
-        client.measurements.splice(index, 1);
-
-        return deleted;
-    }
+    async getStatistics() { return this.repo.getStatisticsAsync(); }
 }

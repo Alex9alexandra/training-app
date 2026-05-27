@@ -32,7 +32,7 @@ describe("WorkoutButtons", () => {
     fireEvent.click(screen.getByRole("button", { name: /update/i }));
 
     expect(window.alert).toHaveBeenCalledWith("Select a workout first!");
-    expect(mockNavigate).not.toHaveBeenCalled(); // 🔥 important
+    expect(mockNavigate).not.toHaveBeenCalled();
   });
 
   it("navigates to update if selectedId exists", () => {

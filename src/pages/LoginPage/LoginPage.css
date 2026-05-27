@@ -1,0 +1,139 @@
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  margin-top: 50px;
+
+}
+
+.login-box {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 40px;
+  border-radius: 20px;
+  border: 2px solid #20E2E2;
+  background-color: rgba(0, 0, 0, 0.3);
+  width: 350px;
+}
+
+.login-title {
+  color: #20E2E2;
+  font-family: 'Inter', sans-serif;
+  font-weight: bold;
+  font-style: italic;
+  text-align: center;
+  margin: 0;
+}
+
+.login-subtitle {
+  color: rgba(255, 255, 255, 0.6);
+  font-family: 'Inter', sans-serif;
+  text-align: center;
+  margin: 0;
+}
+
+.login-input {
+  padding: 10px 20px;
+  border-radius: 20px;
+  border: 2px solid #20E2E2;
+  background-color: transparent;
+  color: #20E2E2;
+  font-family: 'Inter', sans-serif;
+  font-size: 16px;
+  outline: none;
+}
+
+.login-input::placeholder {
+  color: rgba(32, 226, 226, 0.5);
+}
+
+.login-input:focus {
+  border-color: #26f5f5;
+}
+
+.login-error {
+  color: #ff6b6b;
+  font-family: 'Inter', sans-serif;
+  text-align: center;
+  margin: 0;
+}
+
+.login-btn {
+  padding: 10px 20px;
+  border-radius: 20px;
+  border: none;
+  background-color: #20E2E2;
+  color: black;
+  font-family: 'Inter', sans-serif;
+  font-weight: bold;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.login-btn:hover {
+  background-color: #26f5f5;
+}
+
+body {
+  margin: 0;
+  background-color: black;
+}
+
+.register-link {
+  background: none;
+  border: none;
+  color: rgba(32, 226, 226, 0.7);
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  cursor: pointer;
+  text-align: center;
+  padding: 0;
+  transition: 0.2s;
+}
+
+.register-link:hover {
+  color: #20E2E2;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-box {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 40px;
+  border-radius: 20px;
+  border: 2px solid #20E2E2;
+  background-color: #0a0a0a;
+  width: 350px;
+}
+
+.login-success {
+  color: green;
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+.login-question {
+  font-size: 0.9rem;
+  color: #555;
+  text-align: center;
+  margin-bottom: 8px;
+  font-style: italic;
+}
+

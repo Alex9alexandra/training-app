@@ -1,16 +1,11 @@
 import {Request,Response} from "express";
 import {clientService} from "../service/clientServiceInstance";
-import { ClientService } from "../service/ClientService";
 import { validateClient } from "../validators/clientValidators";
 import { validateId } from "../validators/idValidators";
 
-//400 bad input
-//404 not found
-//200 deleted
-//201 added
 
-export const getAllClients=(req: Request,res: Response)=>{
-    const {page="1", limit="5"}=req.query;
+export const getAllClients=async (req: Request,res: Response)=>{
+    const {page="1", limit="5",search=""}=req.query;
 
     const pageNumber=Number(page);
     const limitNumber=Number(limit);
@@ -23,7 +18,7 @@ export const getAllClients=(req: Request,res: Response)=>{
         return res.status(400).json({message:"Limit must be a positive number"});
     }
     
-    const clients=clientService.getAllClients();
+    const clients=await clientService.getAllClients(String(search));
 
     const start=(pageNumber-1)*limitNumber;
     const end=start+limitNumber;
@@ -38,7 +33,7 @@ export const getAllClients=(req: Request,res: Response)=>{
     });
 };
 
-export const getClient=(req: Request,res: Response)=>{
+export const getClient=async (req: Request,res: Response)=>{
     
     const idError=validateId(req.params.id);
     if(idError){
@@ -46,7 +41,7 @@ export const getClient=(req: Request,res: Response)=>{
     }
     const id=Number(req.params.id);
 
-    const client=clientService.getClient(id);
+    const client=await clientService.getClient(id);
     if(!client){
         return res.status(404).json({message:"Client not found"});
     }
@@ -54,18 +49,18 @@ export const getClient=(req: Request,res: Response)=>{
     return res.json(client);
 };
 
-export const addClient=(req:Request,res: Response)=>{
+export const addClient=async (req:Request,res: Response)=>{
     const client=req.body;
     const clientError=validateClient(client);
     if(clientError){
         return res.status(400).json({message:clientError});
     }
 
-    const added=clientService.addClient(client);
+    const added=await clientService.addClient(client);
     return res.status(201).json(added);
 };
 
-export const updateClient=(req: Request,res:Response)=>{
+export const updateClient=async (req: Request,res:Response)=>{
     const idError=validateId(req.params.id);
     if(idError){
         return res.status(400).json({message:idError});
@@ -78,21 +73,21 @@ export const updateClient=(req: Request,res:Response)=>{
         return res.status(400).json({message:clientError});
     }
     
-    const updated=clientService.updateClient(client);
+    const updated=await clientService.updateClient({...client,id});
     if(!updated){
         return res.status(404).json({message:"Client not found"});
     }
     return res.json(client);
 };
 
-export const deleteClient=(req: Request,res: Response)=>{
+export const deleteClient=async (req: Request,res: Response)=>{
     const idError=validateId(req.params.id);
     if(idError){
         return res.status(400).json({message:idError});
     }
     const id=Number(req.params.id);
 
-    const deleted=clientService.deleteClient(id);
+    const deleted=await clientService.deleteClient(id);
     if(!deleted){
         return res.status(404).json({message:"Client not found"});
     }

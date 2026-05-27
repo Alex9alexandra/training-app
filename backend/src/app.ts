@@ -1,3 +1,7 @@
+import dns from "dns";
+dns.setDefaultResultOrder("ipv4first");
+import dotenv from "dotenv";
+dotenv.config();
 import express from "express";
 import clientRoutes from "./routes/clientRoutes";
 import workoutRoutes from "./routes/workoutRoutes";
@@ -6,9 +10,20 @@ import cors from "cors";
 import statisticsRoutes from "./routes/statisticsRoutes";
 import generatorRoutes from "./routes/generatorRoutes";
 import measurementRoutes from "./routes/measurementRoutes";
-const app = express();
+import authRoutes from "./routes/authRoutes";
+import { connectMongo } from "./service/mongodb";
+import chatRoutes from "./routes/chatRoutes";
+import groupClassRoutes from "./routes/groupClassRoutes";
+import { monitoringMiddleware } from "./middleware/monitoringMiddleware";
+import monitoringRoutes from "./routes/monitoringRoutes";
 
-app.use(cors());
+
+const app = express();
+app.use(monitoringMiddleware);
+app.use(cors({
+  origin: "https://192.168.0.102:5173", 
+  credentials: true
+}));
 app.use(express.json());
 
 app.use("/clients", clientRoutes);
@@ -17,5 +32,15 @@ app.use("/clients", exerciseRoutes);
 app.use("/statistics", statisticsRoutes);
 app.use("/generator", generatorRoutes);
 app.use("/clients",measurementRoutes);
+app.use("/auth", authRoutes);
+app.use("/chat", chatRoutes);
+
+app.use("/group-classes", groupClassRoutes);
+app.use("/monitoring", monitoringRoutes);
+app.get('/ping', (req, res) => {
+  res.json({ok:true});
+});
+
+connectMongo();
 
 export default app;

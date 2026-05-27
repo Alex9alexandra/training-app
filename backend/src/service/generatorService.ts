@@ -1,17 +1,18 @@
 import { createFakeClient} from "./fakerService";
-import type {IClientRepo} from "../repository/IClientRepo"
+import { PrismaClientRepo } from "../repository/PrismaClientRepo";
+
 
 type BroadcastFn = (msg:any)=>void;
 let interval: NodeJS.Timeout | null = null;
 
-export function startGenerator(repo:IClientRepo, broadcast:BroadcastFn) {
+export function startGenerator(repo:PrismaClientRepo, broadcast:BroadcastFn) {
   if (interval) return;
 
-  interval = setInterval(() => {
+  interval = setInterval(async () => {
     const batch=[];
     for(let i=0;i<3;i++){
-        const client=createFakeClient();
-        repo.add(client);
+        const fakeClient=createFakeClient();
+        const client=await repo.addAsync(fakeClient);
         batch.push(client);
     }
 

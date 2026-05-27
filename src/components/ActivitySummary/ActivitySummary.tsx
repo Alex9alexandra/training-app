@@ -1,4 +1,4 @@
-// src/components/ActivitySummary/ActivitySummary.tsx
+
 import React from "react";
 import { useAppContext } from "../../context/AppContext";
 import "./ActivitySummary.css";

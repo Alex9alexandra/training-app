@@ -1,16 +1,24 @@
 import { defineConfig, configDefaults } from 'vitest/config';
+import fs from 'fs';
+import path from 'path';
 
 export default defineConfig({
+  server: {
+    host: "0.0.0.0",
+    port: 5173,
+    https: {
+      key: fs.readFileSync(path.resolve(__dirname, './backend/key.pem')),
+      cert: fs.readFileSync(path.resolve(__dirname, './backend/cert.pem')),
+    },
+  },
   test: {
     environment: 'jsdom',
     setupFiles: './src/setupTests.ts',
-    // 1. Exclude Playwright E2E tests from the Vitest runner
     exclude: [...configDefaults.exclude, 'tests/**'],
     globals: true,
     coverage: {
       provider: 'v8',
       reporter: ['text', 'html', 'lcov'],
-      // 2. Exclude non-app files from coverage tracking
       exclude: [
         ...configDefaults.coverage.exclude || [],
         'tests/**',

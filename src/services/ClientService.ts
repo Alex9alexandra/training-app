@@ -1,15 +1,16 @@
 import type {Client} from "../domain/Client";
 import type {Workout} from "../domain/Workout";
 import type {Exercise} from "../domain/Exercise";
-const API_URL = "http://localhost:3000";
+const API_URL = import.meta.env.VITE_API_BASE_URL;
 import { operationQueue } from "../offline/offlineQueue";
 import {sharedRepo} from "../repository/LocalClientRepo";
 import type { Measurement } from "../domain/Measurement";
+import { authFetch } from "../auth/authFetch";
 
 export class ClientService {
   async addClient(client: Client) {
     try{
-    const res = await fetch(`${API_URL}/clients`, {
+    const res = await authFetch("/clients", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(client),
@@ -27,13 +28,13 @@ export class ClientService {
     }
   }
 
-  async getAllClients(page: number, limit: number):  Promise<{
+  async getAllClients(page: number, limit: number,search: string=""):  Promise<{
   data: Client[];
   totalPages: number;
   page: number;
   }> {
     try{
-    const res = await fetch(`${API_URL}/clients?page=${page}&limit=${limit}`);
+    const res = await authFetch(`/clients?page=${page}&limit=${limit}&search=${encodeURIComponent(search)}`);
     if (!res.ok) {
       throw new Error("Server error");
     }
@@ -54,7 +55,7 @@ export class ClientService {
 
   async getClient(id: number) :Promise<Client> {
     try{
-    const res = await fetch(`${API_URL}/clients/${id}`);
+    const res = await authFetch(`/clients/${id}`);
     if (!res.ok) {
       throw new Error("Server error");
     }
@@ -72,7 +73,7 @@ export class ClientService {
 
   async updateClient(client: Client) {
     try{
-    const res = await fetch(`${API_URL}/clients/${client.id}`, {
+    const res = await authFetch(`/clients/${client.id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(client),
@@ -92,7 +93,7 @@ export class ClientService {
 
   async deleteClient(id: number) :Promise<void> {
     try{
-    const res= await fetch(`${API_URL}/clients/${id}`, {
+    const res= await authFetch(`/clients/${id}`, {
       method: "DELETE",
     });
     if (!res.ok) {
@@ -107,7 +108,7 @@ export class ClientService {
 
   async addWorkout(clientId: number, workout: Workout) {
     try{
-      const res = await fetch(`${API_URL}/clients/${clientId}/workouts`, {
+      const res = await authFetch(`/clients/${clientId}/workouts`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(workout),
@@ -136,7 +137,7 @@ export class ClientService {
   page: number;
   }> {
     try{
-    const res = await fetch(`${API_URL}/clients/${clientId}/workouts?page=${page}&limit=${limit}`);
+    const res = await authFetch(`/clients/${clientId}/workouts?page=${page}&limit=${limit}`);
     if (!res.ok) {
       throw new Error("Server error");
     }
@@ -160,7 +161,7 @@ export class ClientService {
 
   async deleteWorkout(clientId: number, workoutId: number):Promise<void> {
     try{
-    const res=await fetch(`${API_URL}/clients/${clientId}/workouts/${workoutId}`, {
+    const res=await authFetch(`/clients/${clientId}/workouts/${workoutId}`, {
       method: "DELETE",
     });
     if (!res.ok) {
@@ -180,8 +181,8 @@ export class ClientService {
 
   async addExercise(clientId: number, workoutId: number, exercise: Exercise) {
     try{
-    const res = await fetch(
-      `${API_URL}/clients/${clientId}/workouts/${workoutId}/exercises`,
+    const res = await authFetch(
+      `/clients/${clientId}/workouts/${workoutId}/exercises`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -215,8 +216,8 @@ export class ClientService {
 
   async deleteExercise(clientId: number, workoutId: number, exerciseId: number):Promise<void> {
     try{
-    const res=await fetch(
-      `${API_URL}/clients/${clientId}/workouts/${workoutId}/exercises/${exerciseId}`,
+    const res=await authFetch(
+      `/clients/${clientId}/workouts/${workoutId}/exercises/${exerciseId}`,
       {
         method: "DELETE",
       }
@@ -252,7 +253,7 @@ export class ClientService {
     }[];
   }> {
     try{
-    const res = await fetch(`${API_URL}/statistics`);
+    const res = await authFetch("/statistics");
     if (!res.ok) {
       throw new Error("Server error");
     }
@@ -284,8 +285,8 @@ export class ClientService {
   async getMeasurements(clientId: number) {
     try {
 
-      const res = await fetch(
-        `${API_URL}/clients/${clientId}/measurements`
+      const res = await authFetch(
+        `/clients/${clientId}/measurements`
       );
 
       if (!res.ok) {
@@ -311,8 +312,8 @@ export class ClientService {
   }
 
   async addMeasurement(clientId: number, measurement: Measurement) {
-    const res = await fetch(
-        `${API_URL}/clients/${clientId}/measurements`,
+    const res = await authFetch(
+        `/clients/${clientId}/measurements`,
         {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -325,6 +326,31 @@ export class ClientService {
     }
 
     return await res.json();
+  }
+
+
+  async getGroupClassesNaive() {
+    const res = await authFetch("/group-classes/stats-naive");
+    if (!res.ok) throw new Error("Failed to fetch naive stats");
+    return res.json();
+  }
+
+  async getGroupClassesOptimized() {
+    const res = await authFetch("/group-classes/stats-optimized");
+    if (!res.ok) throw new Error("Failed to fetch optimized stats");
+    return res.json();
+  }
+
+  async getMonitoringLogs() {
+    const res = await authFetch("/monitoring/logs");
+    if (!res.ok) throw new Error("Failed to fetch logs");
+    return res.json();
+  }
+
+  async getMonitoringAnalysis() {
+    const res = await authFetch("/monitoring/analyse");
+    if (!res.ok) throw new Error("Failed to fetch analysis");
+    return res.json();
   }
 
 }

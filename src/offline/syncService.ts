@@ -1,7 +1,7 @@
 import { sharedRepo } from "../repository/LocalClientRepo";
 import { operationQueue } from "./offlineQueue";
 
-const API_URL = "http://localhost:3000";
+const API_URL = "https://localhost:3000";
 let syncing = false;
 
 export async function syncOperations() {

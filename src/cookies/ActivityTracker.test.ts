@@ -38,7 +38,7 @@ describe("ActivityTracker", () => {
   });
 
   test("initializes missing fields from cookie data", () => {
-    const partialData = JSON.stringify({}); // missing both fields
+    const partialData = JSON.stringify({}); 
 
     vi.mocked(CookieManager.getCookie).mockReturnValue(partialData);
 

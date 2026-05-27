@@ -36,4 +36,44 @@
 
 .measurements-table tr:hover{
     background-color: rgba(255,255,255,0.08);
+    
+}
+
+.client-dashboard-page{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    color: white;
+}
+
+
+.workouts-list{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    justify-content: center;
+    gap: 20px;
+    width: 100%;
+    flex-wrap: wrap;
+}
+
+.workout-card{
+    border: #20E2E2 solid 2px;
+    border-radius: 15px;
+    padding: 10px;
+}
+.workout-card:hover{
+    background-color: rgba(255,255,255,0.1);
+    cursor: pointer;
+    
+}
+
+.client-section{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    width: 100%;
 }

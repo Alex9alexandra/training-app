@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { type Workout } from "../../domain/Workout"; // import from domain
+import { type Workout } from "../../domain/Workout"; 
 import "./WorkoutComp.css";
 
 import Title from "../Title/Title";

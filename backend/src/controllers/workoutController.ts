@@ -3,13 +3,9 @@ import {clientService} from "../service/clientServiceInstance";
 import { validateWorkout } from "../validators/workoutValidators";
 import { validateId } from "../validators/idValidators";
 
-//400 bad input
-//404 not found
-//200 deleted
-//201 added
 
 
-export const getWorkouts=(req: Request,res: Response)=>{
+export const getWorkouts=async (req: Request,res: Response)=>{
     const idError=validateId(req.params.clientId);
     if(idError){
         return res.status(400).json({message:idError});
@@ -28,7 +24,7 @@ export const getWorkouts=(req: Request,res: Response)=>{
         return res.status(400).json({message:"Limit must be a positive number"});
     }
 
-    const workouts=clientService.getWorkouts(clientId);
+    const workouts=await clientService.getWorkouts(clientId);
     if(workouts===null || workouts===undefined){
         return res.status(404).json({message:"Client not found"});
     }
@@ -46,7 +42,7 @@ export const getWorkouts=(req: Request,res: Response)=>{
     });
 };
 
-export const addWorkout=(req: Request,res: Response)=>{
+export const addWorkout=async (req: Request,res: Response)=>{
     const idError=validateId(req.params.clientId);
     if(idError){
         return res.status(400).json({message:idError});
@@ -59,14 +55,14 @@ export const addWorkout=(req: Request,res: Response)=>{
         return res.status(400).json({message:workoutError});
     }
 
-    const added=clientService.addWorkout(clientId, workout);
+    const added=await clientService.addWorkout(clientId, workout);
     if(!added){
         return res.status(404).json({message:"Client not found"});
     }
     return res.status(201).json(added);
 };
 
-export const deleteWorkout=(req: Request,res: Response)=>{
+export const deleteWorkout=async (req: Request,res: Response)=>{
     const idError=validateId(req.params.clientId);
     if(idError){
         return res.status(400).json({message:idError});
@@ -79,7 +75,7 @@ export const deleteWorkout=(req: Request,res: Response)=>{
     }
     const workoutId=Number(req.params.workoutId);
 
-    const deleted=clientService.deleteWorkout(clientId, workoutId);
+    const deleted=await clientService.deleteWorkout(clientId, workoutId);
     if(!deleted){
         return res.status(404).json({message:"Client or workout not found"});
     }

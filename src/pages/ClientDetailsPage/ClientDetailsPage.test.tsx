@@ -26,8 +26,6 @@ vi.mock("../../components/WorkoutComp/WokroutComp", () => ({
   ),
 }));
 
-// Keeping mocks defined even if commented out in UI, 
-// but we won't assert on them in the main "exists" test.
 vi.mock("../../components/ViewMeasurementsComp/ViewMeasurementsComp", () => ({
   default: ({ clientId }: { clientId: number }) => (
     <div data-testid="measurements-comp">Measurements for {clientId}</div>
@@ -66,7 +64,6 @@ describe("ClientDetailsPage", () => {
     mockService.getClient.mockResolvedValue(null);
     renderPage("999");
 
-    // Using findBy to handle the async state transition gracefully
     const message = await screen.findByText(/client not found/i);
     expect(message).toBeInTheDocument();
   });
@@ -79,17 +76,19 @@ describe("ClientDetailsPage", () => {
 
     renderPage("1");
 
-    // Check for Title
     expect(await screen.findByText("DETAILS")).toBeInTheDocument();
 
-    // Check for Workout component (which is active)
     expect(screen.getByTestId("workout-comp")).toHaveTextContent(
       "Workout for 1"
     );
 
-    // Assert that the commented-out components are NOT in the document
-    expect(screen.queryByTestId("measurements-comp")).not.toBeInTheDocument();
-    expect(screen.queryByTestId("availability-comp")).not.toBeInTheDocument();
+    expect(screen.getByTestId("measurements-comp")).toHaveTextContent(
+      "Measurements for 1"
+    );
+
+    expect(
+      screen.queryByTestId("availability-comp")
+    ).not.toBeInTheDocument();
   });
 
   it("converts URL param to number correctly", async () => {

@@ -16,11 +16,9 @@ const ClientDashboardPage: React.FC = () => {
 
     const { service, tracker } = useAppContext();
 
-    /*
-        TEMPORARY:
-        later this comes from login
-    */
-    const clientId = 1;
+    const { loggedUser } = useAppContext();
+    
+    const clientId = loggedUser?.clientId ?? 1;
 
     const [client, setClient] = useState<Client | null>(null);
 

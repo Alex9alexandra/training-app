@@ -1,0 +1,26 @@
+
+BEGIN TRY
+
+BEGIN TRAN;
+
+-- AlterTable
+ALTER TABLE [dbo].[User] ADD [clientId] INT;
+
+-- CreateIndex
+ALTER TABLE [dbo].[User] ADD CONSTRAINT [User_clientId_key] UNIQUE NONCLUSTERED ([clientId]);
+
+-- AddForeignKey
+ALTER TABLE [dbo].[User] ADD CONSTRAINT [User_clientId_fkey] FOREIGN KEY ([clientId]) REFERENCES [dbo].[Client]([id]) ON DELETE SET NULL ON UPDATE CASCADE;
+
+COMMIT TRAN;
+
+END TRY
+BEGIN CATCH
+
+IF @@TRANCOUNT > 0
+BEGIN
+    ROLLBACK TRAN;
+END;
+THROW
+
+END CATCH

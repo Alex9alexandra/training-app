@@ -52,5 +52,24 @@
   background-color: #26f5f5;
 }
 
+.search-bar {
+  width: 400px;
+  align-self: center;
+  padding: 10px 20px;
+  border-radius: 20px;
+  border: 2px solid #20E2E2;
+  background-color: transparent;
+  color: #20E2E2;
+  font-family: 'Inter', sans-serif;
+  font-size: 16px;
+  outline: none;
+}
 
+.search-bar::placeholder {
+  color: rgba(32, 226, 226, 0.5);
+}
+
+.search-bar:focus {
+  border-color: #26f5f5;
+}
 

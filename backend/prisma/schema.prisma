@@ -1,0 +1,107 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlserver"
+  url      = env("DATABASE_URL")
+}
+
+
+model Client {
+  id           Int           @id @default(autoincrement())
+  name         String
+  age          Int
+  workouts     Workout[]
+  measurements Measurement[]
+  user         User?
+  enrollments  ClientClassEnrollment[] 
+}
+
+model Workout {
+  id        Int        @id @default(autoincrement())
+  name      String
+  clientId  Int
+  client    Client     @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  exercises Exercise[]
+}
+
+model Exercise {
+  id        Int     @id @default(autoincrement())
+  name      String
+  sets      Int
+  reps      Int
+  weight    Float
+  workoutId Int
+  workout   Workout @relation(fields: [workoutId], references: [id], onDelete: Cascade)
+}
+
+model Measurement {
+  id                  Int      @id @default(autoincrement())
+  height              Float
+  weight              Float
+  muscularMassPercent Float
+  fatMassPercent      Float
+  boneMassPercent     Float
+  leanBodyMassPercent Float
+  date                DateTime
+  clientId            Int
+  client              Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+}
+
+model User {
+  id               Int     @id @default(autoincrement())
+  username         String  @unique
+  password         String
+  email            String? @unique
+  securityQuestion String?
+  securityAnswer   String?
+  pin              String?
+  roleId           Int
+  role             Role    @relation(fields: [roleId], references: [id])
+  clientId         Int?    @unique
+  client           Client? @relation(fields: [clientId], references: [id])
+}
+
+model Role {
+  id          Int              @id @default(autoincrement())
+  name        String           @unique
+  users       User[]
+  permissions RolePermission[]
+}
+
+model Permission {
+  id    Int              @id @default(autoincrement())
+  name  String           @unique
+  roles RolePermission[]
+}
+
+model RolePermission {
+  id           Int        @id @default(autoincrement())
+  roleId       Int
+  permissionId Int
+  role         Role       @relation(fields: [roleId], references: [id])
+  permission   Permission @relation(fields: [permissionId], references: [id])
+}
+
+model GroupClass {
+  id               Int                    @id @default(autoincrement())
+  name             String
+  scheduledAt      DateTime
+  maxCapacity      Int
+  currentCapacity  Int                    @default(0)
+  enrollments      ClientClassEnrollment[]
+}
+
+model ClientClassEnrollment {
+  id        Int        @id @default(autoincrement())
+  clientId  Int
+  classId   Int
+  enrolledAt DateTime  @default(now())
+  client    Client     @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  class     GroupClass @relation(fields: [classId], references: [id], onDelete: Cascade)
+
+  @@unique([clientId, classId])  
+  @@index([classId])
+  @@index([clientId])
+}
